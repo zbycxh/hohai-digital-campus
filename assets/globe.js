@@ -16,7 +16,6 @@
   ];
 
   var stage = document.getElementById('globe-stage');
-  console.log('[Globe] script start, stage=', !!stage, 'THREE=', typeof window.THREE);
   if (!stage) return;
 
   var tip = document.getElementById('globe-tip');
@@ -247,12 +246,9 @@
     try { new ResizeObserver(resize).observe(stage); } catch (_) {}
   }
   window.hhGlobeResize = resize;
-  console.log('[Globe] resize exposed');
 
   if (!initWebGL()) {
-    console.log('[Globe] WebGL unavailable, showing CSS fallback');
     if (fallback) fallback.style.display = 'grid';
-  } else {
-    console.log('[Globe] WebGL init');
   }
 })();
+
