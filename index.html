@@ -4,9 +4,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>河海大学 · 沉浸式数字探索平台（Mock）</title>
+<title>河海大学 · 数字特刊（Mock）</title>
 <style>
-  /* ========== 字体：思源黑体（Noto Sans CJK SC 同源） ========== */
+  /* ========== 字体：思源宋体（标题）+ 思源黑体（正文） ========== */
+  @font-face{
+    font-family:'Source Han Serif SC';font-style:normal;font-weight:400;font-display:swap;
+    src:url('./_shared/fonts/SourceHanSerifSC-Regular.woff2') format('woff2');
+  }
+  @font-face{
+    font-family:'Source Han Serif SC';font-style:normal;font-weight:700;font-display:swap;
+    src:url('./_shared/fonts/SourceHanSerifSC-Bold.woff2') format('woff2');
+  }
   @font-face{
     font-family:'Source Han Sans SC';font-style:normal;font-weight:400;font-display:swap;
     src:url('./_shared/fonts/SourceHanSansSC-Regular.woff2') format('woff2');
@@ -15,310 +23,832 @@
     font-family:'Source Han Sans SC';font-style:normal;font-weight:700;font-display:swap;
     src:url('./_shared/fonts/SourceHanSansSC-Bold.woff2') format('woff2');
   }
+  @font-face{
+    font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;
+    src:url('./_shared/fonts/BebasNeue-Regular.woff2') format('woff2');
+  }
 
-  /* ========== 设计变量 ========== */
+  /* ========== 设计变量（深色主题） ========== */
   :root{
-    --bg:#FFFFFF;
-    --bg2:#F3FAFD;
-    --ink:#0E2431;
-    --muted:#5C7787;
-    --rule:#DCEAF2;
-    --accent:#0B6E99;      /* 海洋蓝 */
-    --accent-d:#084F70;
-    --sky:#E7F4FB;         /* 浅蓝 */
-    --sky2:#CFE9F6;
-    --accent2:#22C08A;     /* 强调色·浅绿 */
-    --accent2d:#0E8F62;    /* 绿·可读文本用 */
-    --radius:18px;
-    --radius-sm:12px;
-    --shadow:0 10px 30px rgba(11,110,153,.08);
-    --shadow-h:0 18px 44px rgba(11,110,153,.14);
-    --maxw:1180px;
+    --bg:#070B10;
+    --paper:#0C1218;
+    --paper2:#101820;
+    --ink:#E9F1F4;
+    --ink2:#BECBD2;
+    --muted:#7E8D96;
+    --rule:rgba(255,255,255,.11);
+    --rule-d:rgba(255,255,255,.20);
+    --accent:#17B4CE;      /* 青蓝 */
+    --accent-d:#0FA3BB;
+    --accent-l:#5FD0E2;
+    --sky:#0E1C24;         /* 深色交互底 */
+    --sky2:#16323D;
+    --green:#2AD39B;       /* 强调色·浅绿（少量点缀） */
+    --green-d:#2AD39B;
+    --deep:#080D12;        /* 深色影像底色 */
+    --serif:'Source Han Sans SC','思源黑体','Source Han Sans','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    --sans:'Source Han Sans SC','思源黑体','Source Han Sans','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    --numf:'Bebas Neue','Source Han Sans SC','PingFang SC',sans-serif;
+    --maxw:1340px;
+    --gut:clamp(22px,3.6vw,56px);
+    --bar:62px;
+    --sh1:0 1px 2px rgba(0,0,0,.4), 0 10px 26px -16px rgba(0,0,0,.5);
+    --sh2:0 2px 6px rgba(0,0,0,.44), 0 22px 46px -22px rgba(0,0,0,.62);
+    --sh3:0 4px 12px rgba(0,0,0,.5), 0 42px 84px -34px rgba(0,0,0,.72);
     font-size:16px;
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
   body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font-family:'Source Han Sans SC','思源黑体','Source Han Sans','Noto Sans CJK SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
-    line-height:1.7;-webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    margin:0;height:100vh;background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.7;-webkit-font-smoothing:antialiased;overflow:hidden;
   }
   a{color:inherit;text-decoration:none}
-  h1,h2,h3,h4{margin:0;font-weight:700;line-height:1.25;letter-spacing:.01em}
   p{margin:0}
-  img,svg{display:block;max-width:100%}
-  .container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  img,svg,video{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
   .ic{width:22px;height:22px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .ic-sm{width:16px;height:16px}
   .ic-lg{width:26px;height:26px}
 
-  /* ========== 滚动进度条 ========== */
-  #progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;
-    background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .1s linear}
+  /* ========== 阅读进度 ========== */
+  #progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:210;
+    background:linear-gradient(90deg,var(--accent),var(--accent-l));transition:width .12s linear}
 
-  /* ========== 顶部导航 ========== */
-  .topbar{position:fixed;top:0;left:0;right:0;z-index:150;
-    background:rgba(255,255,255,.72);backdrop-filter:blur(14px);
-    border-bottom:1px solid transparent;transition:.3s}
-  .topbar.scrolled{border-bottom-color:var(--rule);box-shadow:0 4px 20px rgba(11,110,153,.05)}
-  .topbar-in{max-width:var(--maxw);margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:24px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.02em}
-  .brand .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--accent),var(--accent2));
-    display:grid;place-items:center;color:#fff;flex:none}
-  .brand .mark svg{width:19px;height:19px}
-  .brand small{display:block;font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.14em}
-  .topnav{margin-left:auto;display:flex;gap:6px}
-  .topnav a{padding:8px 13px;border-radius:999px;font-size:13.5px;color:var(--muted);transition:.2s}
-  .topnav a:hover{color:var(--accent);background:var(--sky)}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;font-weight:700;font-size:14px;
-    background:var(--accent);color:#fff;border:none;cursor:pointer;transition:.25s;box-shadow:0 6px 16px rgba(11,110,153,.22)}
-  .btn:hover{background:var(--accent-d);transform:translateY(-1px);box-shadow:0 10px 24px rgba(11,110,153,.3)}
-  .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--sky2);box-shadow:none}
-  .btn.ghost:hover{background:var(--sky);border-color:var(--accent)}
-  .btn.green{background:var(--accent2);box-shadow:0 6px 16px rgba(34,192,138,.28)}
-  .btn.green:hover{background:var(--accent2d)}
+  /* ========== 贯穿全站：持续流动的水面底纹 ========== */
+  .waterbg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#EAF6F9}
+  .waterbg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    filter:brightness(1.4) saturate(1.5) contrast(1.06)}
+  .waterbg-veil{position:absolute;inset:0;
+    background:linear-gradient(158deg,rgba(255,255,255,.5) 0%,rgba(228,245,250,.28) 50%,rgba(255,255,255,.48) 100%)}
 
-  /* ========== 侧边圆点导览 ========== */
-  .dotnav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:140;
-    display:flex;flex-direction:column;gap:14px}
-  .dotnav button{width:11px;height:11px;border-radius:50%;border:1.5px solid var(--sky2);background:transparent;cursor:pointer;padding:0;
-    position:relative;transition:.25s}
-  .dotnav button::after{content:attr(data-label);position:absolute;right:22px;top:50%;transform:translateY(-50%) translateX(6px);
-    background:var(--ink);color:#fff;font-size:11.5px;padding:4px 10px;border-radius:6px;white-space:nowrap;
+  /* ========== 刊头 + 栏目按钮条 ========== */
+  .appbar{position:fixed;top:0;left:0;right:0;height:var(--bar);z-index:200;
+    display:flex;align-items:center;gap:16px;padding:0 var(--gut);
+    background:rgba(255,255,255,.84);backdrop-filter:blur(16px) saturate(150%);
+    border-bottom:1px solid var(--rule)}
+  .brand{display:flex;align-items:baseline;gap:9px;flex:none}
+  .brand-t{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:.05em;color:var(--accent-d)}
+  .brand-s{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+  .rail{display:flex;align-items:center;gap:3px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+  .rail::-webkit-scrollbar{display:none}
+  .rail button{flex:none;display:inline-flex;align-items:baseline;gap:6px;padding:7px 12px;border:1px solid transparent;
+    border-radius:2px;background:none;cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--ink2);
+    white-space:nowrap;transition:.22s}
+  .rail button i{font-style:normal;font-family:var(--serif);font-size:11px;color:var(--accent);letter-spacing:.02em}
+  .rail button:hover{background:var(--sky);color:var(--accent)}
+  .rail button.on{background:var(--accent);color:#fff;box-shadow:var(--sh1)}
+  .rail button.on i{color:#8FE6C6}
+  .bar-end{display:flex;align-items:center;gap:9px;flex:none;margin-left:auto}
+  .nbtn{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--rule);background:#fff;
+    cursor:pointer;color:var(--accent);transition:.2s}
+  .nbtn:hover{border-color:var(--accent);background:var(--sky)}
+  .nbtn:disabled{opacity:.32;cursor:default;border-color:var(--rule)}
+  .pageind{font-family:var(--numf);font-size:16px;color:var(--muted);letter-spacing:.06em;min-width:62px;text-align:center}
+
+  /* ========== 栏目索引（右侧导航） ========== */
+  .dotnav{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:150;display:flex;flex-direction:column;gap:1px}
+  .dotnav button{position:relative;display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:5px 0;
+    font-family:var(--serif);font-size:11.5px;color:var(--muted);letter-spacing:.1em;justify-content:flex-end}
+  .dotnav button::after{content:attr(data-label);position:absolute;right:36px;top:50%;transform:translateY(-50%) translateX(6px);
+    background:var(--ink);color:#fff;font-family:var(--sans);font-size:11.5px;letter-spacing:0;padding:4px 10px;white-space:nowrap;
     opacity:0;pointer-events:none;transition:.25s}
   .dotnav button:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
-  .dotnav button:hover{border-color:var(--accent);transform:scale(1.2)}
-  .dotnav button.on{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 0 4px rgba(34,192,138,.18)}
+  .dotnav button::before{content:"";width:20px;height:1px;background:var(--rule-d);transition:.25s}
+  .dotnav button:hover::before{width:32px;background:var(--accent)}
+  .dotnav button.on{color:var(--accent)}
+  .dotnav button.on::before{width:32px;height:2px;background:var(--green)}
 
-  /* ========== HERO ========== */
-  .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;
-    background:
-      radial-gradient(900px 500px at 78% 12%,rgba(207,233,246,.7),transparent 70%),
-      radial-gradient(700px 480px at 12% 82%,rgba(34,192,138,.09),transparent 70%),
-      linear-gradient(180deg,#F8FCFE 0%,#ECF7FD 55%,#FFFFFF 100%)}
-  .hero-inner{position:relative;z-index:4;width:100%}
-  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;letter-spacing:.2em;
-    color:var(--accent);text-transform:uppercase;font-weight:700}
-  .eyebrow::before{content:"";width:32px;height:2px;background:var(--accent2);border-radius:2px}
-  .hero h1{font-size:clamp(48px,9vw,104px);letter-spacing:.04em;margin:18px 0 0;line-height:1}
-  .hero h1 .en{display:block;font-size:clamp(13px,1.6vw,17px);letter-spacing:.5em;color:var(--muted);font-weight:400;margin-top:16px}
-  .hero .tag{font-size:clamp(16px,2.2vw,22px);color:var(--accent-d);font-weight:700;margin-top:22px}
-  .hero .desc{max-width:620px;color:var(--muted);margin-top:16px;font-size:15.5px}
-  .hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
-  .hero-slogan{position:absolute;right:6%;top:50%;transform:translateY(-50%);z-index:2;
-    font-size:clamp(60px,10vw,150px);font-weight:700;color:transparent;
-    -webkit-text-stroke:1.4px rgba(11,110,153,.14);letter-spacing:.04em;line-height:1;pointer-events:none;text-align:right}
-  .hero-waves{position:absolute;left:0;right:0;bottom:-2px;height:300px;z-index:1;pointer-events:none}
-  .wave{position:absolute;left:0;bottom:0;width:200%;height:100%}
-  .w1{color:#D3EBF7;animation:drift 20s linear infinite}
-  .w2{color:#B7E0F2;opacity:.78;animation:drift 28s linear infinite reverse}
-  .w3{color:#7FC8E4;opacity:.42;animation:drift 38s linear infinite}
-  .wave path{fill:currentColor}
-  @keyframes drift{to{transform:translateX(-50%)}}
-  .scroll-cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:5;color:var(--muted);
-    font-size:12px;letter-spacing:.16em;display:flex;flex-direction:column;align-items:center;gap:8px}
-  .scroll-cue span{width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:cue 1.8s ease-in-out infinite}
-  @keyframes cue{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
-  .hero-stats{display:flex;gap:38px;flex-wrap:wrap;margin-top:44px}
-  .hero-stats div b{display:block;font-size:clamp(26px,3.4vw,40px);color:var(--accent);line-height:1.1}
-  .hero-stats div span{font-size:12.5px;color:var(--muted);letter-spacing:.06em}
+  /* ========== 版面容器：一次只显示一个板块 ========== */
+  #viewer{position:fixed;left:0;right:0;top:var(--bar);bottom:0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;
+    background:rgba(255,255,255,.10)}
+  .page{display:none}
+  .page.is-on{display:block;animation:pageIn .46s cubic-bezier(.2,.7,.3,1)}
+  .page.cover.is-on{display:flex}
+  @keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .spread{padding:clamp(52px,6.4vw,104px) 0 clamp(30px,3.6vw,54px);border-top:1px solid var(--rule)}
+  .spread.paper{background:rgba(239,247,252,.3)}
+  .spread.dark{background:var(--accent-d);border-top-color:transparent;color:#fff}
 
-  /* ========== 通用 section ========== */
-  section{padding:100px 0;position:relative}
-  .sec-head{margin-bottom:44px;max-width:760px}
-  .sec-head h2{font-size:clamp(26px,3.6vw,42px);margin-top:16px}
-  .sec-head p{color:var(--muted);margin-top:14px;font-size:15.5px}
-  .reveal{opacity:0;transform:translateY(26px);transition:.7s cubic-bezier(.2,.7,.3,1)}
+  /* ========== 版头 ========== */
+  .rh{display:flex;align-items:center;gap:14px;margin-bottom:clamp(26px,3.4vw,44px)}
+  .rh-no{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--accent);letter-spacing:.04em}
+  .rh-name{font-size:12.5px;font-weight:700;letter-spacing:.2em;color:var(--ink)}
+  .rh-rule{flex:1;height:1px;background:var(--rule)}
+  .rh-en{font-size:10.5px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+  .dark .rh-name{color:#fff}
+  .dark .rh-rule{background:rgba(255,255,255,.28)}
+  .dark .rh-en{color:#96A0A4}
+  .dark .rh-no{color:var(--green)}
+  .kicker{display:inline-flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;
+    letter-spacing:.22em;color:var(--accent);text-transform:uppercase}
+  .kicker::before{content:"";width:30px;height:1px;background:var(--accent)}
+  .display{font-family:var(--serif);font-weight:700;font-size:clamp(36px,6.2vw,84px);line-height:1.08;
+    letter-spacing:.01em;margin:18px 0 0;max-width:16em}
+  .display em{font-style:normal;color:var(--accent)}
+  .standfirst{font-family:var(--serif);font-size:clamp(16px,1.85vw,23px);line-height:1.76;color:var(--ink2);
+    margin-top:24px;max-width:46em}
+  .dark .display{color:#fff}
+  .dark .standfirst{color:#CED7DA}
+  .cols{column-count:2;column-gap:clamp(26px,3.6vw,58px);column-rule:1px solid var(--rule);margin-top:clamp(30px,4vw,52px)}
+  .cols p{font-size:15.5px;line-height:2;color:var(--ink2);margin:0 0 1.15em}
+  .cols p+p{text-indent:1.8em;margin-top:-.35em}
+  .dc{float:left;font-family:var(--serif);font-weight:700;font-size:4.1em;line-height:.86;
+    color:var(--accent);padding:.08em .12em 0 0;margin-top:.04em}
+  .pull{margin:0;border-top:1px solid var(--accent);border-bottom:1px solid var(--rule);
+    padding:clamp(18px,2.4vw,30px) 0}
+  .pull blockquote{margin:0;font-family:var(--serif);font-size:clamp(19px,2.6vw,32px);line-height:1.5;color:var(--ink)}
+  .pull cite{display:block;margin-top:14px;font-family:var(--sans);font-style:normal;font-size:12px;
+    letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .dark .pull{border-top-color:var(--green);border-bottom-color:rgba(255,255,255,.24)}
+  .dark .pull blockquote{color:#fff}
+  .dark .pull cite{color:#96A0A4}
+
+  /* ========== 卡片系统：浅边框 + 柔和阴影 + 背景层级 ========== */
+  .card{position:relative;background:linear-gradient(172deg,#FFFFFF 0%,#F8FCFE 100%);
+    border:1px solid var(--rule);border-radius:2px;box-shadow:var(--sh2)}
+  .card.soft{box-shadow:var(--sh1)}
+  .card.lift{z-index:6;box-shadow:var(--sh3)}
+  .figcap{display:flex;gap:12px;border-top:1px solid var(--rule);padding-top:9px;font-size:12px;color:var(--muted);line-height:1.7}
+  .figcap b{font-family:var(--serif);color:var(--accent);flex:none;letter-spacing:.08em}
+  .figcap.center{justify-content:center;text-align:center}
+  .folio{display:block;text-align:right;font-family:var(--serif);font-size:13px;color:var(--muted);margin-top:clamp(30px,4vw,58px)}
+  .reveal{opacity:0;transform:translateY(22px);transition:.7s cubic-bezier(.2,.7,.3,1)}
   .reveal.in{opacity:1;transform:none}
 
-  /* ========== Bento Grid ========== */
-  #explore{background:linear-gradient(180deg,#FFFFFF 0%,var(--bg2) 100%)}
-  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:132px;gap:16px;grid-auto-flow:dense}
-  .card{background:var(--bg);border:1px solid var(--rule);border-radius:var(--radius);padding:22px;
-    position:relative;overflow:hidden;transition:.3s;display:flex;flex-direction:column}
-  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-h);border-color:var(--sky2)}
-  .card .kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
-  .card h3{font-size:19px;margin-top:10px}
-  .card p{color:var(--muted);font-size:13.5px;margin-top:8px;line-height:1.65}
-  .card .iconwrap{width:44px;height:44px;border-radius:13px;background:var(--sky);color:var(--accent);
-    display:grid;place-items:center;margin-bottom:14px}
-  .card .iconwrap.green{background:rgba(34,192,138,.12);color:var(--accent2d)}
-  .b-feature{grid-column:span 2;grid-row:span 2;background:
-    radial-gradient(420px 260px at 84% 8%,rgba(207,233,246,.85),transparent 70%),var(--bg)}
-  .b-feature h3{font-size:30px;margin-top:14px}
-  .b-feature p{font-size:14.5px;max-width:440px}
-  .b-feature .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:20px}
-  .tagchip{font-size:12px;padding:5px 12px;border-radius:999px;background:var(--sky);color:var(--accent-d);font-weight:700;border:1px solid var(--sky2)}
-  .b-discipline{grid-column:span 2;grid-row:span 2;background:
-    radial-gradient(340px 240px at 20% 110%,rgba(34,192,138,.14),transparent 70%),var(--bg)}
-  .stat-card{justify-content:center}
-  .stat-card b{font-size:clamp(34px,4.6vw,56px);color:var(--accent);line-height:1;letter-spacing:.01em}
-  .stat-card b.green{color:var(--accent2d)}
-  .stat-card span{display:block;font-size:12.5px;color:var(--muted);margin-top:10px;letter-spacing:.04em}
-  .card.fill{background:linear-gradient(140deg,var(--accent),#0E7FA8);color:#fff;border:none}
-  .card.fill .kicker{color:rgba(255,255,255,.75)}
-  .card.fill p{color:rgba(255,255,255,.8)}
-  .card.fill h3{color:#fff}
-  .card.mint{background:linear-gradient(140deg,#1FBE89,#12A576);color:#fff;border:none}
-  .card.mint .kicker,.card.mint p{color:rgba(255,255,255,.85)}
-  .card.mint h3{color:#fff}
-  .card.cta{align-items:flex-start;justify-content:center;gap:12px}
-  .linkrow{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--accent);font-size:14px;margin-top:12px}
-  .linkrow .ic{transition:.25s}
-  .linkrow:hover .ic{transform:translateX(4px)}
-  .motto-mini{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:auto}
-  .motto-mini span{font-size:13.5px;color:var(--accent-d);font-weight:700;display:flex;align-items:center;gap:6px}
-  .motto-mini span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent2)}
+  /* ========== 封面（真实流动水面） ========== */
+  .cover{position:relative;min-height:calc(100vh - var(--bar));min-height:calc(100dvh - var(--bar));
+    overflow:hidden;background:var(--deep)}
+  .cover-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .cover-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:
+      linear-gradient(100deg,rgba(9,17,21,.9) 0%,rgba(9,17,21,.66) 32%,rgba(9,17,21,.16) 60%,rgba(9,17,21,.46) 100%),
+      linear-gradient(0deg,rgba(9,17,21,.82) 0%,rgba(9,17,21,0) 48%),
+      radial-gradient(120% 78% at 76% 20%,rgba(105,208,222,.2),transparent 62%)}
+  .cover-in{position:relative;z-index:3;width:100%;max-width:var(--maxw);margin:0 auto;
+    padding:clamp(24px,4vh,50px) var(--gut) clamp(22px,3.6vh,44px);
+    min-height:calc(100vh - var(--bar));min-height:calc(100dvh - var(--bar));
+    display:grid;grid-template-rows:auto 1fr auto;gap:clamp(18px,3vh,34px)}
+  .cv-top{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:12px}
+  .cv-pill{font-family:var(--serif);font-size:12px;letter-spacing:.28em;color:#8FD3E6;text-transform:uppercase}
+  .cv-meta{margin-left:auto;font-size:11.5px;letter-spacing:.22em;color:#97A1A5;text-transform:uppercase}
+  .cv-main{align-self:end;max-width:min(760px,80%)}
+  .cv-kicker{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.24em;color:#7FE0BE;font-weight:700;margin-bottom:20px}
+  .cv-kicker::before{content:"";width:44px;height:2px;background:var(--green)}
+  .cv-title{font-family:var(--serif);font-weight:700;font-size:clamp(54px,11.4vw,168px);line-height:.94;
+    letter-spacing:.02em;margin:0;color:#fff;text-shadow:0 6px 40px rgba(2,26,42,.45)}
+  .cv-title.thin{font-weight:400;color:#9ED0E2}
+  .cv-en{font-size:clamp(11px,1.3vw,14px);letter-spacing:.44em;color:#98A2A6;margin-top:24px;text-transform:uppercase}
+  .cv-stand{font-family:var(--serif);font-size:clamp(15px,1.7vw,21px);color:#D8DEE0;margin-top:22px;line-height:1.8;max-width:560px}
+  .cv-foot{display:flex;align-items:flex-end;gap:clamp(14px,2.4vw,34px);flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.3);
+    padding-top:14px;font-size:11.5px;letter-spacing:.16em;color:#98A2A6;text-transform:uppercase}
+  .cv-foot .cv-stat{display:flex;align-items:baseline;gap:7px;letter-spacing:normal;text-transform:none}
+  .cv-foot .cv-stat b{font-family:var(--serif);font-size:24px;color:#fff;letter-spacing:.02em}
+  .cv-foot .cv-stat span{font-size:11.5px;color:#98A2A6}
+  .cv-cue{margin-left:auto;display:inline-flex;align-items:center;gap:10px;letter-spacing:.18em;color:#8FD3E6}
+  .cv-cue span{width:1px;height:28px;background:linear-gradient(#8FD3E6,transparent);animation:cue 1.9s ease-in-out infinite}
+  @keyframes cue{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
+
+  /* ========== 水带：真实流动水面横带 ========== */
+  .band{margin:clamp(38px,5.2vw,82px) 0 0}
+  .band-media{position:relative;display:grid;align-items:end;height:clamp(212px,33vh,352px);
+    overflow:hidden;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    background:linear-gradient(120deg,#08222A,#0E6E80)}
+  .band-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .band-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(9,17,21,.36) 0%,rgba(9,17,21,.06) 44%,rgba(9,17,21,.58) 100%)}
+  .band-q{position:relative;z-index:2;padding-bottom:clamp(20px,2.8vw,38px);color:#fff}
+  .band-q b{display:block;font-family:var(--serif);font-weight:700;font-size:clamp(19px,2.8vw,36px);line-height:1.44;color:#fff;
+    text-shadow:0 4px 30px rgba(2,26,42,.4)}
+  .band-q span{display:block;margin-top:12px;font-size:11px;letter-spacing:.28em;color:#93C5D6;text-transform:uppercase}
+  .band-cap{margin-top:-34px;padding:15px 20px;max-width:min(680px,80%);display:flex;gap:12px;
+    font-size:12.5px;color:var(--ink2);line-height:1.75}
+  .band-cap b{font-family:var(--serif);color:var(--accent);flex:none;letter-spacing:.08em}
+  .band-cap.green{border-color:rgba(34,192,138,.4)}
+  .band-cap.green b{color:var(--green-d)}
+
+  /* ========== 重叠图版：图片被卡片/标签压住边缘 ========== */
+  .hero-fig{position:relative;margin:clamp(34px,4.8vw,68px) 0 clamp(72px,8vw,116px)}
+  .hero-fig img{width:100%;height:clamp(230px,42vh,470px);object-fit:cover;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .hf-quote{position:absolute;left:0;right:0;bottom:-40px;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+  .hf-quote .pull{background:linear-gradient(150deg,#FFFFFF 0%,#F6FBFE 100%);border:1px solid var(--rule);
+    border-top:2px solid var(--green);border-radius:2px;box-shadow:var(--sh3);padding:clamp(20px,2.6vw,34px) clamp(22px,3vw,40px);
+    max-width:min(720px,88%)}
+  .hf-tag{position:absolute;top:0;left:0;z-index:5;margin:0 0 0 var(--gut);padding:11px 18px;
+    background:var(--accent);color:#fff;font-size:11.5px;letter-spacing:.16em;box-shadow:var(--sh2);
+    display:inline-flex;align-items:center;gap:9px}
+
+  /* ========== 目录 ========== */
+  .toc{list-style:none;padding:0;margin:clamp(28px,3.6vw,48px) 0 0;column-count:2;column-gap:clamp(30px,5vw,90px)}
+  .toc li{border-bottom:1px solid var(--rule)}
+  .toc button{display:flex;align-items:baseline;gap:13px;padding:15px 0;width:100%;background:none;border:none;
+    cursor:pointer;text-align:left;font-family:var(--sans);transition:.25s}
+  .toc button:hover{padding-left:6px}
+  .toc-no{font-family:var(--serif);font-weight:700;font-size:14px;color:var(--accent);width:24px;flex:none}
+  .toc-body{flex:none}
+  .toc-title{font-size:16px;font-weight:700;display:block;color:var(--ink)}
+  .toc-sub{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:3px;letter-spacing:.04em}
+  .toc-dots{flex:1;border-bottom:1.5px dotted var(--rule-d);transform:translateY(-5px);min-width:20px}
+  .toc-page{font-family:var(--serif);font-size:15px;color:var(--muted);flex:none}
+  .covernote{margin-top:clamp(30px,4vw,52px);border-left:3px solid var(--green);padding:4px 0 4px 20px}
+  .covernote h3{font-family:var(--serif);font-size:16px;margin:0 0 8px;letter-spacing:.06em}
+  .covernote p{font-size:14.5px;color:var(--ink2);line-height:1.95;max-width:54em}
+  .toc-cta{display:flex;align-items:center;gap:18px;margin-top:clamp(26px,3.4vw,44px)}
+  .toc-cta .toc-cta-t{font-family:var(--serif);font-size:15px;letter-spacing:.04em;color:var(--ink2)}
 
   /* ========== 时间轴 ========== */
-  .timeline-wrap{position:relative;overflow-x:auto;padding:14px 0 30px;scrollbar-width:thin}
-  .timeline-wrap::-webkit-scrollbar{height:6px}
-  .timeline-wrap::-webkit-scrollbar-thumb{background:var(--sky2);border-radius:99px}
-  .timeline{display:flex;gap:0;min-width:max-content;position:relative;padding-top:64px}
-  .tl-line{position:absolute;left:0;right:0;top:78px;height:3px;background:linear-gradient(90deg,var(--sky2),var(--accent),var(--accent2));border-radius:99px}
-  .tl-item{width:262px;padding-right:26px;position:relative}
-  .tl-year{position:absolute;top:0;left:0;font-size:26px;font-weight:700;color:var(--accent);letter-spacing:.02em}
-  .tl-dot{position:absolute;top:70px;left:0;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--accent2);z-index:2}
-  .tl-year small{display:block;font-size:11px;color:var(--muted);letter-spacing:.14em;font-weight:400;margin-top:2px}
-  .tl-body{margin-top:92px;border:1px solid var(--rule);border-radius:var(--radius-sm);padding:16px 18px;background:#fff;transition:.3s}
-  .tl-item:hover .tl-body{border-color:var(--sky2);box-shadow:var(--shadow);transform:translateY(-3px)}
-  .tl-body h4{font-size:15.5px;color:var(--ink)}
-  .tl-body p{font-size:13px;color:var(--muted);margin-top:7px}
+  .tl-wrap{position:relative;overflow-x:auto;padding:8px 0 26px;scrollbar-width:thin;border-top:1px solid var(--ink)}
+  .tl-wrap::-webkit-scrollbar{height:6px}
+  .tl-wrap::-webkit-scrollbar-thumb{background:var(--sky2)}
+  .tl{display:flex;min-width:max-content}
+  .tl-item{width:288px;padding:26px 26px 0 0;border-right:1px solid var(--rule)}
+  .tl-item:last-child{border-right:none}
+  .tl-year{font-family:var(--serif);font-weight:700;font-size:46px;line-height:1;color:var(--accent);letter-spacing:.01em}
+  .tl-tag{display:inline-block;margin-top:8px;font-size:11px;letter-spacing:.2em;color:var(--green-d);font-weight:700}
+  .tl h4{font-size:16px;margin:18px 0 0;font-weight:700}
+  .tl p{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.8}
+  .tl-hint{font-size:12px;color:var(--muted);letter-spacing:.1em;margin-top:14px}
 
-  /* ========== 学科矩阵 ========== */
-  #disciplines{background:var(--bg2)}
-  .disc-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:30px;align-items:start}
-  .panel{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:26px}
-  .panel h3{font-size:18px}
-  .panel .sub{color:var(--muted);font-size:13px;margin-top:8px}
-  #chart-radar{width:100%;min-height:380px}
-  .disc-list{display:grid;gap:12px}
-  .disc-item{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border-radius:var(--radius-sm);
-    background:#fff;border:1px solid var(--rule);transition:.25s}
-  .disc-item:hover{border-color:var(--sky2);box-shadow:var(--shadow);transform:translateX(4px)}
-  .disc-item .iconwrap{margin:0;width:38px;height:38px;border-radius:11px}
-  .disc-item h4{font-size:14.5px}
-  .disc-item p{font-size:12.5px;color:var(--muted);margin-top:3px}
-  .disc-item .lv{margin-left:auto;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;height:fit-content}
-  .lv.core{background:rgba(34,192,138,.14);color:var(--accent2d)}
-  .lv.sup{background:var(--sky);color:var(--accent-d)}
-  .lv.cross{background:#FDF3E3;color:#B07515}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-  .chip{font-size:12.5px;padding:6px 13px;border-radius:999px;border:1px solid var(--rule);color:var(--muted);background:#fff;transition:.2s}
+  /* ========== 学科 ========== */
+  .disc-grid{display:grid;grid-template-columns:1.02fr 1fr;gap:clamp(26px,3.4vw,52px);align-items:start;margin-top:8px}
+  .panel{padding:clamp(18px,2.2vw,28px)}
+  .panel h3{font-family:var(--serif);font-size:18px;margin:0}
+  .panel .sub{color:var(--muted);font-size:12.5px;margin-top:8px}
+  #chart-radar{width:100%;min-height:390px;margin-top:10px}
+  .disc-list{display:grid;gap:0;border-top:1px solid var(--ink)}
+  .disc-item{display:flex;gap:14px;align-items:flex-start;padding:16px 2px;border-bottom:1px solid var(--rule);transition:.2s}
+  .disc-item:hover{padding-left:6px}
+  .disc-item .icw{width:34px;height:34px;flex:none;display:grid;place-items:center;border:1px solid var(--rule);color:var(--accent);
+    background:linear-gradient(160deg,#fff,#EDF7F9);box-shadow:var(--sh1)}
+  .disc-item .icw.green{color:var(--green-d);background:linear-gradient(160deg,#fff,#EFFBF6);border-color:rgba(34,192,138,.3)}
+  .disc-item h4{font-size:15px;margin:0}
+  .disc-item p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.7}
+  .disc-item .lv{margin-left:auto;font-family:var(--serif);font-size:11px;font-weight:700;padding:2px 8px;white-space:nowrap;
+    height:fit-content;border:1px solid currentColor}
+  .lv.core{color:var(--green-d)}
+  .lv.sup{color:var(--accent)}
+  .lv.cross{color:#B07515}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{font-size:12px;padding:6px 13px;border:1px solid var(--rule);color:var(--ink2);border-radius:2px;
+    background:linear-gradient(172deg,#fff,#F6FBFE);box-shadow:var(--sh1);transition:.22s}
   .chip:hover{border-color:var(--accent);color:var(--accent);background:var(--sky)}
 
   /* ========== 数字校园 ========== */
-  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
-  .tab{padding:11px 22px;border-radius:999px;border:1.5px solid var(--rule);background:#fff;cursor:pointer;
-    font-size:14px;font-weight:700;color:var(--muted);transition:.25s;font-family:inherit}
-  .tab:hover{border-color:var(--sky2);color:var(--accent)}
-  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 8px 20px rgba(11,110,153,.22)}
+  .tabs{display:flex;gap:0;flex-wrap:wrap;margin:8px 0 clamp(26px,3.4vw,40px);border-bottom:1px solid var(--rule)}
+  .tab{position:relative;padding:12px 24px;border:none;background:none;cursor:pointer;font-family:var(--sans);
+    font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.04em;transition:.25s}
+  .tab i{font-family:var(--serif);font-style:normal;font-size:11px;margin-right:7px;color:var(--accent);vertical-align:1px}
+  .tab:hover{color:var(--accent)}
+  .tab.on{color:var(--ink)}
+  .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent)}
   .campus-pane{display:none}
-  .campus-pane.on{display:grid;grid-template-columns:1fr 1.15fr;gap:28px;animation:fade .5s ease}
+  .campus-pane.on{display:grid;grid-template-columns:1fr 1.12fr;gap:clamp(24px,3.2vw,48px);animation:fade .5s ease}
   @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  .campus-info h3{font-size:24px}
-  .campus-info .addr{display:inline-flex;align-items:center;gap:8px;color:var(--accent2d);font-weight:700;font-size:13.5px;margin-top:10px}
-  .campus-info p{color:var(--muted);font-size:14.5px;margin-top:14px}
-  .campus-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
-  .campus-meta div{border:1px solid var(--rule);border-radius:var(--radius-sm);padding:13px 15px}
-  .campus-meta b{display:block;font-size:19px;color:var(--accent)}
-  .campus-meta span{font-size:12px;color:var(--muted)}
-  .mapbox{border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;background:
-    linear-gradient(160deg,#F7FCFE,#EAF6FC)}
+  .campus-info h3{font-family:var(--serif);font-size:clamp(22px,2.7vw,32px);margin:0}
+  .campus-info .addr{display:inline-flex;align-items:center;gap:8px;color:var(--green-d);font-weight:700;font-size:13px;margin-top:12px}
+  .campus-info>p{color:var(--ink2);font-size:15px;margin-top:16px;line-height:1.95}
+  .campus-meta{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:26px;border-top:1px solid var(--rule)}
+  .campus-meta div{padding:14px 2px;border-bottom:1px solid var(--rule)}
+  .campus-meta b{display:block;font-family:var(--serif);font-size:19px;color:var(--accent)}
+  .campus-meta span{font-size:11.5px;color:var(--muted);letter-spacing:.1em}
+  .mapbox{padding:10px;background:linear-gradient(172deg,#fff,#F4FAFD)}
+  .mapbox-in{border:1px solid var(--rule);overflow:hidden;background:linear-gradient(160deg,#F8FCFE,#EDF7F9)}
   .mapbox svg{width:100%;height:100%;display:block}
+  .campus-fig{position:relative;margin:clamp(34px,4.4vw,64px) 0 clamp(46px,5.4vw,80px)}
+  .campus-fig img{width:100%;height:clamp(226px,38vh,420px);object-fit:cover;
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .cf-tag{position:absolute;top:0;left:0;right:0;padding:12px var(--gut);color:#fff;font-size:12px;letter-spacing:.18em;
+    background:linear-gradient(180deg,rgba(9,17,21,.62),transparent);display:flex;align-items:center;gap:12px}
+  .cf-tag b{font-family:var(--serif);letter-spacing:.08em}
+  .cf-stats{position:absolute;right:var(--gut);bottom:0;transform:translateY(34px);display:flex;
+    padding:14px clamp(16px,2vw,26px);gap:clamp(18px,2.6vw,40px)}
+  .cf-stats div{display:flex;align-items:baseline;gap:7px}
+  .cf-stats b{font-family:var(--serif);font-size:clamp(24px,3vw,38px);color:var(--accent);line-height:1}
+  .cf-stats span{font-size:11.5px;color:var(--muted);letter-spacing:.1em}
 
-  /* ========== 数字河海 ========== */
-  #numbers{background:linear-gradient(150deg,var(--accent),#0B5B80 60%,#0A4E6E)}
-  #numbers .sec-head h2,#numbers .sec-head p{color:#fff}
-  #numbers .sec-head p{color:rgba(255,255,255,.75)}
-  #numbers .eyebrow{color:#BEE9DC}
-  #numbers .eyebrow::before{background:var(--accent2)}
-  .num-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-  .num{border-radius:var(--radius);padding:26px 22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(6px)}
-  .num b{font-size:clamp(38px,5vw,60px);color:#fff;line-height:1;display:block}
-  .num b i{font-style:normal;font-size:.42em;margin-left:3px;color:#9FE3CB}
-  .num span{display:block;color:rgba(255,255,255,.78);font-size:13px;margin-top:12px}
-  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-  .badge{padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
-    color:#fff;font-size:13px;font-weight:700}
+  /* ========== 图集·瀑布流 ========== */
+  .mfeature{position:relative;display:grid;align-items:end;min-height:clamp(220px,40vh,440px);
+    margin:clamp(30px,4vw,54px) 0 clamp(56px,6.4vw,92px);
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .mfeature img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .mf-veil{position:absolute;inset:0;background:linear-gradient(0deg,rgba(9,17,21,.62) 0%,rgba(9,17,21,.05) 52%),
+    linear-gradient(90deg,rgba(9,17,21,.5),transparent 60%)}
+  .mf-in{position:relative;z-index:2;padding-bottom:clamp(20px,2.6vw,36px);color:#fff}
+  .mf-in b{display:block;font-family:var(--serif);font-size:clamp(20px,3vw,40px);line-height:1.3;color:#fff}
+  .mf-in span{display:block;margin-top:12px;font-size:11px;letter-spacing:.28em;color:#93C5D6;text-transform:uppercase}
+  .mf-cap{position:absolute;right:var(--gut);bottom:0;transform:translateY(34px);max-width:min(560px,70%);
+    padding:15px 20px;display:flex;gap:12px;font-size:12.5px;color:var(--ink2);line-height:1.75}
+  .mf-cap b{font-family:var(--serif);color:var(--accent);flex:none}
+
+  .ms{column-count:3;column-gap:clamp(16px,1.9vw,28px);margin-top:clamp(26px,3.4vw,44px)}
+  .mcard{break-inside:avoid;position:relative;margin:0 0 clamp(16px,1.9vw,28px);padding:10px;
+    background:linear-gradient(172deg,#FFFFFF 0%,#F7FBFE 100%);border:1px solid var(--rule);border-radius:2px;
+    box-shadow:var(--sh2)}
+  .mcard:nth-child(3n+2){margin-top:22px}
+  .mcard:nth-child(4n){margin-top:10px}
+  .mcard .mph{border:1px solid var(--rule);overflow:hidden;background:var(--sky)}
+  .mcard .mph img{width:100%;height:auto;display:block;transition:transform .9s cubic-bezier(.2,.7,.3,1)}
+  .mcard:hover .mph img{transform:scale(1.035)}
+  .mcard figcaption{padding:13px 6px 4px;font-size:12.5px;color:var(--muted);line-height:1.8}
+  .mcard figcaption b{display:block;font-family:var(--serif);font-size:15.5px;color:var(--ink);margin-bottom:6px}
+  .mstamp{position:absolute;top:-11px;left:-11px;z-index:4;display:inline-flex;align-items:center;gap:7px;
+    padding:6px 12px;background:var(--accent);color:#fff;font-size:11px;letter-spacing:.12em;box-shadow:var(--sh3)}
+  .mstamp.green{background:var(--green);color:#06301F}
+  .mstamp.green .ic{stroke:#06301F}
+  .mstamp .ic{width:14px;height:14px;stroke:#fff}
+  .mcard.txt{background:linear-gradient(158deg,#F7FBFE 0%,#E9F5FC 100%);border-color:var(--rule-d);padding:clamp(18px,2vw,26px)}
+  .mcard.txt blockquote{margin:0;font-family:var(--serif);font-size:clamp(17px,1.7vw,22px);line-height:1.56;color:var(--accent-d)}
+  .mcard.txt cite{display:block;margin-top:12px;font-family:var(--sans);font-style:normal;font-size:11.5px;
+    letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+  .mdata{display:grid;gap:12px;margin-top:4px}
+  .mdata div{display:flex;align-items:baseline;gap:9px;border-bottom:1px solid var(--rule);padding-bottom:10px}
+  .mdata div:last-child{border-bottom:none;padding-bottom:0}
+  .mdata b{font-family:var(--serif);font-size:clamp(24px,2.4vw,34px);color:var(--accent);line-height:1}
+  .mdata span{font-size:12.5px;color:var(--ink2)}
+
+  /* ========== 数字河海（深色跨页 · 水面为底） ========== */
+  .spread.waterbg{position:relative;background:var(--deep);overflow:hidden}
+  .sec-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.58;z-index:0}
+  .sec-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(180deg,rgba(9,17,21,.8) 0%,rgba(9,17,21,.44) 42%,rgba(9,17,21,.86) 100%)}
+  .spread.waterbg>.wrap{position:relative;z-index:2}
+  .num-grid{display:grid;grid-template-columns:repeat(4,1fr);align-items:start;gap:clamp(12px,1.5vw,20px);margin-top:calc(clamp(30px,4vw,52px) + 22px)}
+  .num{padding:clamp(20px,2.6vw,34px) clamp(16px,2vw,24px);background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.26);border-radius:2px;box-shadow:0 22px 50px -24px rgba(0,0,0,.6);
+    backdrop-filter:blur(7px)}
+  .num:nth-child(2),.num:nth-child(4){margin-top:22px}
+  .num b{font-family:var(--serif);font-weight:700;font-size:clamp(38px,5.2vw,68px);color:#fff;line-height:1;display:block;letter-spacing:.01em}
+  .num b i{font-style:normal;font-size:.36em;margin-left:4px;color:var(--green)}
+  .num span{display:block;color:#AAB4B8;font-size:12.5px;margin-top:14px;line-height:1.7}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:calc(clamp(30px,4vw,52px) + 20px)}
+  .badge{padding:11px 20px;color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.06em;border-radius:2px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.26);backdrop-filter:blur(6px)}
 
   /* ========== 校训 ========== */
-  .spirit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-  .spirit{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:26px 22px;position:relative;overflow:hidden;transition:.3s}
-  .spirit:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
-  .spirit::after{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-  .spirit .num-big{font-size:40px;font-weight:700;color:var(--sky2);line-height:1}
-  .spirit h3{font-size:19px;margin-top:12px;color:var(--accent-d)}
-  .spirit p{font-size:13.5px;color:var(--muted);margin-top:10px}
+  .spirit-grid{display:grid;grid-template-columns:repeat(4,1fr);align-items:start;gap:clamp(12px,1.5vw,20px);margin-top:clamp(26px,3.4vw,44px)}
+  .spirit{position:relative;padding:clamp(20px,2.6vw,32px) clamp(18px,2.2vw,26px);
+    background:linear-gradient(172deg,#FFFFFF 0%,#F7FBFE 100%);border:1px solid var(--rule);border-radius:2px;
+    box-shadow:var(--sh2);transition:.3s}
+  .spirit:nth-child(2),.spirit:nth-child(4){margin-top:20px}
+  .spirit:hover{box-shadow:var(--sh3)}
+  .spirit .num-big{font-family:var(--serif);font-size:15px;font-weight:700;color:var(--green-d);letter-spacing:.1em}
+  .spirit h3{font-family:var(--serif);font-size:clamp(20px,2.4vw,28px);margin:16px 0 0;color:var(--accent-d);letter-spacing:.06em}
+  .spirit p{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.9}
+  .spirit::after{content:"";position:absolute;left:0;bottom:0;width:0;height:3px;background:var(--green);transition:.55s}
+  .spirit.in::after{width:38px}
 
   /* ========== 河海人 ========== */
-  #people{background:var(--bg2)}
-  .people-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-  .person{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:22px;transition:.3s}
-  .person:hover{border-color:var(--sky2);box-shadow:var(--shadow);transform:translateY(-4px)}
-  .person .iconwrap{margin-bottom:14px}
-  .person h4{font-size:15.5px}
-  .person p{font-size:12.5px;color:var(--muted);margin-top:7px}
+  .people-grid{display:grid;grid-template-columns:repeat(4,1fr);align-items:start;gap:clamp(12px,1.5vw,20px);margin-top:clamp(26px,3.4vw,44px)}
+  .person{padding:clamp(20px,2.6vw,30px) clamp(18px,2.2vw,26px);background:linear-gradient(172deg,#FFFFFF 0%,#F7FBFE 100%);
+    border:1px solid var(--rule);border-radius:2px;box-shadow:var(--sh2);transition:.3s}
+  .person:nth-child(2),.person:nth-child(4){margin-top:20px}
+  .person:hover{box-shadow:var(--sh3)}
+  .person .icw{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--rule);color:var(--accent);
+    background:linear-gradient(160deg,#fff,#EDF7F9);margin-bottom:16px;box-shadow:var(--sh1)}
+  .person .icw.green{color:var(--green-d);background:linear-gradient(160deg,#fff,#EFFBF6);border-color:rgba(34,192,138,.3)}
+  .person h4{font-size:15.5px;margin:0}
+  .person p{font-size:12.5px;color:var(--muted);margin-top:8px;line-height:1.82}
 
-  /* ========== 契合度测试 ========== */
-  #quiz{background:linear-gradient(180deg,#FFFFFF, var(--bg2))}
-  .quizbox{background:#fff;border:1px solid var(--rule);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);max-width:820px;margin:0 auto}
-  .q-item{margin-bottom:26px}
+  /* ========== 互动（契合度测试） ========== */
+  .quizbox{padding:clamp(24px,3.4vw,46px);max-width:920px;margin:clamp(30px,4vw,50px) auto 0}
+  .q-item{margin-bottom:30px}
   .q-item:last-of-type{margin-bottom:0}
-  .q-title{font-size:16px;font-weight:700;display:flex;gap:10px;align-items:baseline}
-  .q-title i{font-style:normal;color:var(--accent2d);font-size:13px;font-weight:700}
-  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-  .opt{text-align:left;padding:15px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--rule);background:#fff;
-    cursor:pointer;font-family:inherit;font-size:13.5px;color:var(--ink);transition:.2s;display:flex;gap:9px;align-items:flex-start}
-  .opt:hover{border-color:var(--sky2);background:var(--sky)}
-  .opt.sel{border-color:var(--accent);background:var(--sky);box-shadow:0 0 0 3px rgba(11,110,153,.1)}
-  .opt span{color:var(--muted);font-size:12px;display:block;margin-top:3px}
-  .quiz-actions{display:flex;gap:14px;align-items:center;margin-top:30px;flex-wrap:wrap}
-  .quiz-result{margin-top:26px;padding:24px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--sky),#F0FBF6);
-    border:1px solid var(--sky2);display:none}
-  .quiz-result.on{display:block;animation:fade .5s ease}
-  .quiz-result h3{font-size:20px;color:var(--accent-d)}
-  .quiz-result .pill{display:inline-block;margin-top:6px;padding:5px 13px;border-radius:999px;background:var(--accent2);color:#fff;font-weight:700;font-size:13px}
-  .quiz-result p{font-size:14px;color:var(--muted);margin-top:12px}
+  .q-title{font-size:16px;font-weight:700;display:flex;gap:12px;align-items:baseline;font-family:var(--serif)}
+  .q-title i{font-style:normal;font-family:var(--serif);color:var(--accent);font-size:13px}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:16px;border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+  .opt{text-align:left;padding:16px 17px;border:none;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    background:linear-gradient(172deg,#fff,#FBFDFE);cursor:pointer;font-family:var(--sans);font-size:13.5px;color:var(--ink);
+    transition:.2s;display:flex;gap:10px;align-items:flex-start}
+  .opt:hover{background:var(--sky)}
+  .opt.sel{background:var(--sky);box-shadow:inset 0 -2px 0 var(--accent)}
+  .opt i{font-style:normal;font-family:var(--serif);color:var(--accent);font-size:12px;flex:none}
+  .opt span{color:var(--muted);font-size:12px;display:block;margin-top:4px}
+  .opt em{font-style:normal;display:block;margin-top:3px}
+  .quiz-actions{display:flex;gap:16px;align-items:center;margin-top:32px;flex-wrap:wrap;border-top:1px solid var(--rule);padding-top:24px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:11px 24px;font-family:var(--sans);font-weight:700;font-size:13.5px;
+    letter-spacing:.06em;background:var(--accent);color:#fff;border:1px solid var(--accent);cursor:pointer;transition:.25s;
+    box-shadow:var(--sh2)}
+  .btn:hover{background:var(--accent-d);border-color:var(--accent-d)}
+  .btn.green{background:var(--green);border-color:var(--green);color:#06301F}
+  .btn.green:hover{background:#1AA87A;border-color:#1AA87A}
+  .btn.ghost{background:#fff;color:var(--accent)}
+  .btn.ghost:hover{background:var(--sky)}
 
-  /* ========== Footer ========== */
-  footer{background:#0B2A3A;color:#BBD4E0;padding:64px 0 40px;margin-top:0}
-  footer .fgrid{display:grid;grid-template-columns:1.5fr 1fr;gap:40px}
-  footer .brand{color:#fff}
-  footer .brand small{color:#7FA5B8}
-  footer h4{color:#fff;font-size:14px;letter-spacing:.1em;margin-bottom:14px;text-transform:uppercase}
-  footer p{font-size:13px;line-height:1.8;color:#9FBDCC}
-  footer .notice{margin-top:18px;font-size:12.5px;color:#8AA9BA;border-left:3px solid var(--accent2);padding-left:14px}
-  footer .sources ol{padding-left:1.2rem;font-size:12.5px;color:#9FBDCC;margin:0}
-  footer .sources li{margin-bottom:8px;overflow-wrap:break-word;word-break:break-all}
-  footer .sources .src-title{color:#D6E7F0;word-break:normal}
-  footer .sources .src-url{display:block;margin-top:2px;font-size:12px;color:#5FC6E8;word-break:break-all}
-  footer .fbot{margin-top:44px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:12px;color:#7FA5B8}
+  /* ========== 虚线圆箭头按钮（参考风格标识元素） ========== */
+  .cbtn{position:relative;width:66px;height:66px;flex:none;border-radius:50%;padding:0;
+    border:1px dashed var(--accent);background:transparent;color:var(--accent);
+    display:grid;place-items:center;cursor:pointer;transition:.4s cubic-bezier(.2,.7,.3,1)}
+  .cbtn::after{content:"";position:absolute;inset:8px;border-radius:50%;border:1px solid var(--rule);transition:.4s}
+  .cbtn .ic{width:22px;height:22px;transition:transform .4s cubic-bezier(.2,.7,.3,1)}
+  .cbtn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .cbtn:hover::after{inset:5px;border-color:rgba(255,255,255,.5)}
+  .cbtn:hover .ic{transform:translateX(4px)}
+  .cbtn.light{border-color:rgba(255,255,255,.78);color:#fff}
+  .cbtn.light::after{border-color:rgba(255,255,255,.3)}
+  .cbtn.light:hover{background:var(--accent);border-color:var(--accent)}
+  .cbtn.sm{width:52px;height:52px}
+  .cbtn.sm .ic{width:18px;height:18px}
+  .cv-cta{display:inline-flex;align-items:center;gap:16px}
+  .cv-cta .cv-cta-t{font-size:11px;letter-spacing:.24em;color:#97A1A5;text-transform:uppercase;line-height:1.6}
+  .quiz-result{margin-top:28px;padding:26px;border:1px solid rgba(34,192,138,.5);background:#F2FCF8;display:none;
+    box-shadow:var(--sh2)}
+  .quiz-result.on{display:block;animation:fade .5s ease}
+  .quiz-result h3{font-family:var(--serif);font-size:20px;color:var(--accent-d);margin:0}
+  .quiz-result .pill{display:inline-block;margin-top:10px;padding:4px 13px;background:var(--green);color:#06301F;font-weight:700;font-size:12.5px;letter-spacing:.08em}
+  .quiz-result p{font-size:14.5px;color:var(--ink2);margin-top:14px;line-height:1.95}
+
+  /* ========== 封底 ========== */
+  .back{background:var(--ink);color:#B8C1C4;min-height:calc(100vh - var(--bar));min-height:calc(100dvh - var(--bar))}
+  .fbrand{display:flex;align-items:baseline;gap:12px}
+  .fbrand .brand-t{color:#fff;font-size:22px}
+  .fgrid{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(30px,4vw,60px);margin-top:28px}
+  .back h4{color:#fff;font-family:var(--serif);font-size:13px;letter-spacing:.16em;margin:0 0 16px}
+  .back p{font-size:13.5px;line-height:1.95;color:#98A2A6}
+  .back .notice{margin-top:20px;font-size:12.5px;color:#8B9498;border-left:3px solid var(--green);padding-left:16px;line-height:1.9}
+  .back .sources ol{padding-left:1.3rem;font-size:12.5px;color:#98A2A6;margin:0;font-family:var(--serif)}
+  .back .sources li{margin-bottom:10px}
+  .back .sources .src-title{color:#DFE4E6}
+  .back .sources .src-url{display:block;margin-top:3px;font-family:var(--sans);font-size:11.5px;color:#3FC0D6;word-break:break-all}
+  .fb-cta{display:flex;align-items:center;gap:18px;margin-top:clamp(34px,4.2vw,60px)}
+  .fb-cta .fb-cta-t{font-family:var(--serif);font-size:15px;letter-spacing:.03em;color:#DFE4E6}
+  .fbot{margin-top:44px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);display:flex;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;font-size:11.5px;letter-spacing:.1em;color:#8B9498}
+
+  /* ========== 页脚翻页条 ========== */
+  .pfoot{margin-top:clamp(34px,4.6vw,66px);padding-top:18px;border-top:1px solid var(--rule)}
+  .dark .pfoot,.back .pfoot{border-top-color:rgba(255,255,255,.2)}
+  .pfoot-in{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .pfoot .plabel{font-family:var(--serif);font-size:12.5px;letter-spacing:.16em;color:var(--muted);margin:0 auto}
+  .dark .pfoot .plabel,.back .pfoot .plabel{color:#96A0A4}
+  .pfoot .btn{font-size:13px;padding:9px 20px}
 
   /* ========== 响应式 ========== */
-  @media (max-width:1000px){
+  @media (max-width:1180px){
     .disc-grid{grid-template-columns:1fr}
     .campus-pane.on{grid-template-columns:1fr}
-    .num-grid,.spirit-grid,.people-grid{grid-template-columns:repeat(2,1fr)}
-    .hero-slogan{display:none}
+    .ms{column-count:2}
+    .num-grid{grid-template-columns:repeat(2,1fr)}
   }
-  @media (max-width:760px){
-    section{padding:72px 0}
-    .topnav{display:none}
-    .bento{grid-template-columns:repeat(2,1fr);grid-auto-rows:120px}
-    .b-feature,.b-discipline{grid-column:span 2}
+  @media (max-width:1040px){
+    .brand-s{display:none}
+    .spirit-grid,.people-grid{grid-template-columns:repeat(2,1fr)}
+    .spirit:nth-child(2),.spirit:nth-child(4),.person:nth-child(2),.person:nth-child(4){margin-top:0}
+  }
+  @media (max-width:820px){
     .dotnav{display:none}
+    .cols{column-count:1}
+    .toc{column-count:1}
+    .cv-main{max-width:100%}
     .opts{grid-template-columns:1fr}
-    footer .fgrid{grid-template-columns:1fr}
-    .hero-stats{gap:24px}
+    .fgrid{grid-template-columns:1fr}
+    .pageind{display:none}
+    .cf-stats{position:static;transform:none;justify-content:flex-start;margin-top:16px;width:fit-content}
+    .campus-fig{margin-bottom:clamp(30px,4vw,50px)}
+    .mf-cap{position:static;transform:none;max-width:100%;margin-top:-24px}
   }
-  @media (max-width:480px){
+  @media (max-width:680px){
+    .ms{column-count:1}
+    .mcard:nth-child(3n+2),.mcard:nth-child(4n){margin-top:0}
     .num-grid,.spirit-grid,.people-grid{grid-template-columns:1fr}
-    .bento{grid-template-columns:1fr}
-    .b-feature,.b-discipline{grid-column:span 1;grid-row:auto}
+    .num:nth-child(2),.num:nth-child(4),.spirit:nth-child(2),.spirit:nth-child(4),
+    .person:nth-child(2),.person:nth-child(4){margin-top:0}
     .campus-meta{grid-template-columns:1fr}
+    .badges{margin-top:clamp(30px,4vw,52px)}
+    .band-cap{max-width:100%}
+    .hf-quote{bottom:-30px}
+    .hf-quote .pull{max-width:100%}
   }
+  @media (max-height:700px){.dotnav{display:none}}
+  @media (prefers-reduced-motion:reduce){
+    .reveal{opacity:1!important;transform:none!important}
+    .page.is-on{animation:none}
+    video{display:none}
+    .cover,.spread.waterbg{background:linear-gradient(140deg,#08222A,#0E6E80)}
+    .band-media{background:linear-gradient(140deg,#08222A,#0E6E80)}
+    .waterbg{background:linear-gradient(160deg,#EDF7F9,#F7FBFE)}
+    .num:nth-child(2),.num:nth-child(4),.spirit:nth-child(2),.spirit:nth-child(4),
+    .person:nth-child(2),.person:nth-child(4){margin-top:0}
+  }
+
+  /* ==========================================================
+     新增板块 10–20
+     ========================================================== */
+  .sec-note{font-size:12px;color:var(--muted);letter-spacing:.03em;margin-top:14px}
+  .dark .sec-note{color:#96A0A4}
+
+  /* ---- 贯穿全站：数字河流水波纹 canvas ---- */
+  .waterbg-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+  /* ---- 10 实时数据看板 ---- */
+  .board-ticker{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:clamp(22px,3vw,34px);
+    padding:12px 18px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);backdrop-filter:blur(6px)}
+  .live{display:inline-flex;align-items:center;gap:8px;font-family:var(--numf);font-size:15px;letter-spacing:.16em;color:#fff}
+  .live i{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,192,138,.6)}70%{box-shadow:0 0 0 10px rgba(34,192,138,0)}100%{box-shadow:0 0 0 0 rgba(34,192,138,0)}}
+  .board-clock{font-family:var(--numf);font-size:20px;color:#8FD3E6;letter-spacing:.06em}
+  .board-tick{font-size:13px;color:#CED7DA}
+  .board-tick b{color:var(--green)}
+  .board-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.5vw,20px);margin-top:clamp(20px,2.6vw,30px)}
+  .board-kpi{padding:clamp(16px,2vw,24px);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(7px)}
+  .board-kpi b{display:block;font-family:var(--numf);font-size:clamp(30px,3.6vw,46px);color:#fff;line-height:1;letter-spacing:.02em}
+  .board-kpi b i{font-style:normal;font-size:.44em;margin-left:5px;color:var(--green)}
+  .board-kpi span{display:block;margin-top:10px;font-size:12px;color:#AAB4B8}
+  .board-cols{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(16px,2vw,26px);margin-top:clamp(18px,2.4vw,28px)}
+  .board-panel{padding:clamp(16px,2vw,26px);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2)}
+  .board-panel h3{font-size:14px;letter-spacing:.14em;color:#fff;margin:0 0 14px;font-weight:700}
+  .feed{list-style:none;padding:0;margin:0}
+  .feed li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px dashed rgba(255,255,255,.16);
+    font-size:13.5px;color:#CED7DA;opacity:.45;transition:.45s}
+  .feed li:last-child{border-bottom:none}
+  .feed li.on{opacity:1;color:#fff}
+  .feed li time{font-family:var(--numf);font-size:14px;color:#8FD3E6;flex:none;letter-spacing:.06em}
+  .talent{display:grid;gap:15px}
+  .tr-top{display:flex;justify-content:space-between;font-size:12.5px;color:#CED7DA;margin-bottom:6px}
+  .tr-top b{font-family:var(--numf);font-size:15px;color:#fff;letter-spacing:.04em}
+  .talent-bar{height:6px;background:rgba(255,255,255,.14);overflow:hidden}
+  .talent-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--green));
+    transition:width 1.1s cubic-bezier(.2,.7,.3,1)}
+
+  /* ---- 06 实时数据与创新：交叉成果卡片 ---- */
+  .ino-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,24px);margin-top:clamp(26px,3.4vw,44px)}
+  .ino-card{padding:clamp(18px,2.2vw,28px);background:linear-gradient(172deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--rule);
+    box-shadow:var(--sh2);transition:.3s}
+  .ino-card:hover{box-shadow:var(--sh3);border-color:var(--sky2);transform:translateY(-3px)}
+  .ino-y{font-family:var(--numf);font-size:16px;letter-spacing:.08em;color:var(--accent-l);display:block}
+  .ino-card h3{font-size:17px;margin:10px 0 0}
+  .ino-card p{font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.85}
+  .ino-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .ino-tags span{font-size:11.5px;padding:4px 10px;border:1px solid var(--rule);color:var(--ink2);background:transparent}
+
+
+  /* ---- 08 人物胶片 · 3D 立体 coverflow ---- */
+  .film{position:relative;margin:clamp(26px,3.4vw,46px) 0 0;padding:44px 0 34px;background:var(--deep);
+    border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);overflow:hidden;cursor:grab;
+    touch-action:pan-y;perspective:1600px;perspective-origin:50% 44%}
+  .film:active{cursor:grabbing}
+  .film::before,.film::after{content:"";position:absolute;left:0;right:0;height:14px;z-index:9;
+    background-image:radial-gradient(circle,rgba(255,255,255,.4) 2px,transparent 2.6px);background-size:22px 14px;background-position:11px 6px}
+  .film::before{top:8px}
+  .film::after{bottom:8px}
+  .film-stage{position:relative;height:clamp(320px,44vh,430px);transform-style:preserve-3d}
+  .film-cell{position:absolute;left:50%;top:50%;width:clamp(186px,18.5vw,238px);margin:0;transform-origin:50% 50%;
+    transition:transform .62s cubic-bezier(.22,.72,.28,1),opacity .5s linear,filter .5s linear;will-change:transform,opacity}
+  .film-cell figcaption{padding:12px 2px 0;font-size:12.5px;color:#98A2A6;line-height:1.75;
+    opacity:0;transition:opacity .5s ease;height:96px;overflow:hidden}
+  .film-cell.is-center figcaption{opacity:1}
+  .film-ph{position:relative;aspect-ratio:3/4;background:linear-gradient(160deg,#26343A,#101618);overflow:hidden;
+    border:1px solid rgba(255,255,255,.2);transition:border-color .5s,box-shadow .5s}
+  .film-ph img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;user-select:none;-webkit-user-drag:none;
+    filter:grayscale(.22) brightness(.86) contrast(1.03);transition:filter .5s}
+  .film-cell.is-center .film-ph{border-color:rgba(95,208,226,.72);
+    box-shadow:0 28px 66px -26px rgba(0,0,0,.9),0 0 0 1px rgba(95,208,226,.28)}
+  .film-cell.is-center .film-ph img{filter:grayscale(0) brightness(1) contrast(1.06)}
+  .ph-tag{position:absolute;top:10px;left:10px;z-index:2;font-size:10px;letter-spacing:.14em;padding:3px 8px;
+    background:rgba(8,14,18,.66);color:#BFEAF4;border:1px solid rgba(95,208,226,.42)}
+  .ph-role{position:absolute;bottom:10px;left:10px;right:10px;z-index:2;font-size:10.5px;color:#CDE9F1;letter-spacing:.05em;
+    text-shadow:0 1px 6px rgba(0,0,0,.85)}
+  .film-cell figcaption b{display:inline-block;font-family:var(--serif);font-size:16px;color:#fff;margin:0 8px 6px 0}
+  .film-cell figcaption .ph-years{display:inline-block;font-style:normal;font-size:11px;color:var(--accent-l);letter-spacing:.06em;
+    padding:1px 8px;border:1px solid rgba(95,208,226,.32);margin:0 9px 6px 0}
+  .film-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:26px}
+  .film-count{font-family:var(--numf);font-size:17px;color:#CED7DA;letter-spacing:.1em;min-width:78px;text-align:center}
+  .film-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:.08em}
+
+  /* ---- 11 校园打卡点 ---- */
+  .spot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.8vw,24px);margin-top:clamp(26px,3.4vw,44px)}
+  .spot{position:relative;display:flex;flex-direction:column;background:linear-gradient(172deg,#0B141B,#080F15);
+    border:1px solid var(--rule);box-shadow:var(--sh1);transition:.35s;overflow:hidden}
+  .spot:hover{box-shadow:var(--sh3);border-color:var(--sky2);transform:translateY(-4px)}
+  .spot-ph{position:relative;aspect-ratio:16/10;overflow:hidden;background:#0A141A;border-bottom:1px solid var(--rule)}
+  .spot-ph img{width:100%;height:100%;object-fit:cover;filter:saturate(1.04);
+    transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+  .spot:hover .spot-ph img{transform:scale(1.06)}
+  .spot-ph .stamp{position:absolute;top:11px;left:11px;font-size:10px;letter-spacing:.12em;color:#04141A;
+    background:var(--green);padding:3px 9px;box-shadow:0 4px 12px -4px rgba(0,0,0,.6)}
+  .spot-ph .sp-loc{position:absolute;left:11px;bottom:11px;font-size:10.5px;letter-spacing:.06em;color:#EAF6FA;
+    background:rgba(4,10,14,.72);border:1px solid rgba(120,200,220,.3);padding:3px 9px}
+  .spot-body{padding:clamp(14px,1.7vw,20px);display:flex;flex-direction:column;gap:9px;flex:1}
+  .spot-body h4{font-size:15.5px;margin:0;display:flex;align-items:center;gap:8px;font-family:var(--serif);letter-spacing:.03em}
+  .spot-body h4 .ic{width:18px;height:18px;color:var(--accent-l);flex:none}
+  .spot-body .sp-desc{font-size:12.4px;color:var(--muted);line-height:1.75}
+  .spot-why{border-top:1px dashed var(--rule);padding-top:10px;font-size:12.2px;color:var(--ink2);line-height:1.8}
+  .spot-why b{display:inline-block;font-size:9.5px;letter-spacing:.14em;color:var(--green);
+    border:1px solid rgba(42,211,155,.42);padding:1px 6px;margin-right:7px;vertical-align:1px}
+
+  /* ---- 12 特色课程 ---- */
+  .course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,22px);margin-top:clamp(26px,3.4vw,44px)}
+  .course{padding:clamp(18px,2.2vw,26px);background:linear-gradient(172deg,#fff,#F8FCFD);border:1px solid var(--rule);
+    box-shadow:var(--sh1);transition:.3s}
+  .course:hover{box-shadow:var(--sh3);transform:translateY(-3px)}
+  .course .ct{display:inline-block;font-size:10.5px;letter-spacing:.14em;color:#fff;background:var(--accent);padding:3px 9px}
+  .course .ct.g{background:var(--green-d)}
+  .course h3{font-size:16.5px;margin:12px 0 0}
+  .course p{font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.8}
+  .course .meta{display:flex;gap:16px;margin-top:14px;border-top:1px solid var(--rule);padding-top:12px;font-size:11.5px;color:var(--ink2)}
+  .course .meta b{font-family:var(--numf);font-size:16px;color:var(--accent);font-weight:400;margin-right:4px}
+
+  /* ---- 13 校友足迹 · 真实中国地图 + 3D 柱状 ---- */
+  .mapwrap{display:grid;grid-template-columns:1.55fr 1fr;gap:clamp(20px,2.6vw,40px);margin-top:clamp(24px,3vw,40px);align-items:start}
+  .hmap{position:relative;border:1px solid var(--rule);box-shadow:var(--sh2);overflow:hidden;
+    background:radial-gradient(120% 96% at 50% 2%,#0A1E28 0%,#050C12 70%)}
+  .hmap-scene{position:relative;height:clamp(400px,56vh,580px);perspective:1500px;perspective-origin:50% 32%}
+  .hmap-plane{position:absolute;left:50%;top:53%;width:var(--pw,880px);height:var(--ph,528px);
+    transform:translate(-50%,-50%) rotateX(52deg);transform-style:preserve-3d;transform-origin:50% 50%;
+    filter:drop-shadow(0 26px 34px rgba(0,0,0,.55))}
+  .hmap-plane svg{width:100%;height:100%;display:block;overflow:visible}
+  .hmap-plane .prov{fill:#0F2A35;stroke:rgba(95,208,226,.28);stroke-width:1.1;
+    vector-effect:non-scaling-stroke;transition:fill .3s,stroke .3s}
+  .hmap-plane .prov.hot{fill:rgba(23,180,206,.34);stroke:rgba(95,208,226,.75)}
+  .htrack{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+  .hbar{position:absolute;width:12px;margin-left:-6px;border-radius:3px 3px 0 0;
+    transform-origin:50% 100%;transform:translate(-50%,-100%) rotateX(-52deg);pointer-events:none;
+    background:linear-gradient(90deg,#8CF0D6 0%,#2AC0DB 38%,#118DA6 100%);
+    box-shadow:0 0 12px rgba(42,192,219,.45),0 8px 18px -8px rgba(0,0,0,.8)}
+  .hbar::after{content:"";position:absolute;left:2px;right:2px;top:-2px;height:3px;border-radius:3px;
+    background:#B6F5E4;box-shadow:0 0 8px rgba(140,240,214,.8)}
+  .hbar.s::before{content:"";position:absolute;left:-1px;right:-1px;bottom:-3px;height:5px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(42,192,219,.5),transparent)}
+  .hbar.on{background:linear-gradient(90deg,#B6F5E4 0%,#49E0B0 40%,#17B4CE 100%);
+    box-shadow:0 0 18px rgba(73,224,176,.7),0 8px 18px -8px rgba(0,0,0,.8)}
+  .hmap-tip{position:absolute;pointer-events:none;background:rgba(6,15,21,.95);color:#EAF4F7;font-size:11.5px;
+    letter-spacing:.04em;padding:6px 11px;border:1px solid rgba(120,200,220,.34);opacity:0;transition:opacity .18s;
+    white-space:nowrap;z-index:9;transform:translate(-50%,-100%)}
+  .hmap-legend{position:absolute;left:14px;bottom:12px;z-index:6;display:flex;align-items:center;gap:9px;
+    font-size:10.5px;letter-spacing:.1em;color:#8FA6B0}
+  .hmap-legend .lg-bar{width:8px;border-radius:2px 2px 0 0;
+    background:linear-gradient(180deg,#8CF0D6,#118DA6);height:22px}
+  .hmap-legend .lg-min{width:8px;height:8px;border-radius:2px 2px 0 0;
+    background:linear-gradient(180deg,#8CF0D6,#118DA6)}
+  .mapstat{display:grid;border-top:1px solid var(--rule)}
+  .mapstat div{display:flex;align-items:baseline;gap:12px;padding:16px 2px;border-bottom:1px solid var(--rule)}
+  .mapstat b{font-family:var(--numf);font-size:clamp(30px,3.6vw,44px);color:var(--accent);line-height:1}
+  .mapstat span{font-size:12.5px;color:var(--ink2)}
+  .map-quote{margin-top:24px;border-left:3px solid var(--green);padding:4px 0 4px 18px;
+    font-family:var(--serif);font-size:15px;line-height:1.9;color:var(--ink2)}
+
+  /* ---- 15 校友留言板 ---- */
+  .gb-form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:clamp(22px,3vw,34px)}
+  .gb-form input,.gb-form textarea{font-family:var(--sans);font-size:13.5px;color:var(--ink);
+    border:1px solid var(--rule);background:#fff;padding:11px 14px;outline:none;transition:.2s}
+  .gb-form input:focus,.gb-form textarea:focus{border-color:var(--accent)}
+  .gb-form .gb-name{width:180px}
+  .gb-form .gb-msg{flex:1;min-width:220px;resize:vertical;min-height:46px}
+  .gb-list{column-count:3;column-gap:clamp(14px,1.8vw,24px);margin-top:clamp(20px,2.6vw,32px)}
+  .gb-note{break-inside:avoid;margin:0 0 clamp(14px,1.8vw,24px);padding:18px 20px;
+    background:linear-gradient(172deg,#fff,#F8FCFD);border:1px solid var(--rule);border-top:2px solid var(--accent);box-shadow:var(--sh1)}
+  .gb-note:nth-child(3n+2){border-top-color:var(--green)}
+  .gb-note p{font-size:13.5px;color:var(--ink2);line-height:1.9}
+  .gb-note .who{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:12px;color:var(--muted)}
+  .gb-note .av{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+    background:var(--sky);color:var(--accent);font-family:var(--serif);font-size:12px}
+  .gb-empty{color:var(--muted);font-size:13.5px}
+
+  /* ---- 07 全景校园 · 地球 / 沉浸 VR ---- */
+  #s15{background:radial-gradient(125% 95% at 50% 6%,rgba(11,30,40,.72),rgba(3,7,10,.95) 64%),#04070A;border-top-color:transparent}
+  .globe-stage{position:relative;margin-top:clamp(22px,3vw,38px);height:clamp(420px,62vh,680px);cursor:grab;overflow:hidden;border:1px solid var(--rule);border-radius:12px;background:#020508}
+  .globe-stage canvas{display:block;width:100%;height:100%}
+  .globe-mark{position:absolute;transform:translate(-50%,-50%);z-index:2;padding:0;border:0;background:none;cursor:pointer;display:none}
+  .globe-mark i{display:block;width:12px;height:12px;border-radius:50%;background:#49E0B0;box-shadow:0 0 0 4px rgba(73,224,176,.25),0 0 18px rgba(73,224,176,.9)}
+  .globe-mark span{position:absolute;left:50%;top:-28px;transform:translateX(-50%);white-space:nowrap;font-size:11px;color:#EAF6FA;background:rgba(4,10,14,.7);padding:2px 8px;border:1px solid rgba(120,200,220,.25);border-radius:4px;opacity:0;transition:.2s}
+  .globe-mark:hover span,.globe-mark.on span{opacity:1}
+  .globe-tip{position:absolute;left:14px;right:14px;bottom:14px;z-index:5;display:flex;gap:14px;padding:14px;background:rgba(4,10,14,.92);border:1px solid rgba(120,200,220,.25);border-radius:10px;opacity:0;transform:translateY(12px);transition:.3s;pointer-events:none}
+  .globe-tip.on{opacity:1;transform:none;pointer-events:auto}
+  .globe-tip img{width:160px;height:100px;flex:none;object-fit:cover;border-radius:6px;border:1px solid rgba(120,200,220,.2)}
+  .globe-tip .tt{display:flex;flex-direction:column;justify-content:center;gap:6px}
+  .globe-tip b{font-family:var(--serif);font-size:16px;color:#fff;letter-spacing:.03em}
+  .globe-tip b em{font-style:normal;font-size:10px;letter-spacing:.16em;color:#49E0B0;margin-left:10px;text-transform:uppercase}
+  .globe-tip p{margin:0;font-size:12.5px;line-height:1.8;color:#C4D4DA}
+  .globe-enter{font-family:var(--sans);font-size:12px;letter-spacing:.1em;color:#04121A;background:linear-gradient(120deg,var(--accent),var(--accent-l));border:0;border-radius:4px;padding:8px 14px;cursor:pointer;width:fit-content}
+  .globe-enter:hover{filter:brightness(1.1)}
+  .globe-campus{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .globe-campus button{font-family:var(--sans);font-size:11px;letter-spacing:.08em;color:#EAF6FA;background:rgba(4,10,14,.75);border:1px solid rgba(120,200,220,.28);border-radius:20px;padding:7px 14px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+  .globe-campus button i{display:block;width:7px;height:7px;border-radius:50%;background:#49E0B0;box-shadow:0 0 8px rgba(73,224,176,.9)}
+  .globe-campus button:hover,.globe-campus button.on{background:rgba(23,180,206,.22);border-color:var(--accent-l)}
+  .globe-css{position:absolute;inset:0;z-index:3;display:none;place-items:center;background:#020508}
+  .globe-css .planet{width:min(64%,420px);aspect-ratio:1;border-radius:50%;background:url('assets/earth.jpg') 0 50%/auto 100%;animation:spin 24s linear infinite;box-shadow:inset -24px -24px 60px rgba(0,0,0,.8),0 0 60px rgba(23,180,206,.15)}
+  @keyframes spin{to{background-position:200% 50%}}
+  .globe-css-note{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.08em;color:#6E8A95}
+  .pano-modal{position:fixed;inset:0;z-index:300;display:none;background:#000}
+  .pano-modal.on{display:block}
+  .pano-view{position:absolute;inset:0;background:#000;background-size:auto 100%;background-repeat:repeat-x;background-position:center;cursor:grab}
+  .pano-close{position:absolute;top:18px;right:18px;z-index:301;background:rgba(4,10,14,.8);border:1px solid rgba(120,200,220,.3);color:#EAF6FA;padding:8px 14px;border-radius:4px;cursor:pointer;font-size:12px;letter-spacing:.08em}
+  .pano-close:hover{background:rgba(23,180,206,.2)}
+  @media (max-width:760px){
+    .globe-tip{flex-direction:column}
+    .globe-tip img{width:100%;height:auto}
+  }
+
+  /* ---- 新增板块：响应式 ---- */
+  @media (max-width:1180px){
+    .ino-grid,.course-grid,.spot-grid{grid-template-columns:repeat(2,1fr)}
+    .board-grid{grid-template-columns:repeat(2,1fr)}
+    .board-cols,.mapwrap{grid-template-columns:1fr}
+    .gb-list{column-count:2}
+  }
+  @media (max-width:680px){
+    .ino-grid,.course-grid,.spot-grid,.board-grid{grid-template-columns:1fr}
+    .life:nth-child(2),.life:nth-child(4){margin-top:0}
+    .pano-thumbs{grid-template-columns:1fr}
+    .gb-list{column-count:1}
+    .film-cell{width:52vw}
+    .film-cell figcaption{height:112px}
+    .film-stage{height:clamp(330px,52vh,420px)}
+    }
+
+  /* ==========================================================
+     深色主题覆盖：把原先的浅色底/白底卡片统一压到深色底上
+     ========================================================== */
+  .waterbg{background:#050A0F}
+  .waterbg video{filter:brightness(.66) saturate(1.2) contrast(1.06)}
+  .waterbg-veil{background:linear-gradient(158deg,rgba(4,9,14,.8) 0%,rgba(6,15,22,.6) 50%,rgba(4,9,14,.84) 100%)}
+  .appbar{background:rgba(7,12,17,.82);border-bottom-color:var(--rule)}
+  .rail button{color:var(--ink2)}
+  .rail button:hover{background:rgba(255,255,255,.07);color:var(--accent-l)}
+  .rail button.on{background:linear-gradient(120deg,var(--accent),var(--accent-l));color:#04141A}
+  .rail button.on i{color:#04141A}
+  .nbtn{background:rgba(255,255,255,.04);color:var(--accent-l)}
+  .nbtn:hover{background:rgba(255,255,255,.1)}
+  .dotnav button::after{background:#E9F1F4;color:#0A1015}
+  #viewer{background:transparent}
+  .spread{background:transparent}
+  .spread.paper{background:rgba(255,255,255,.022)}
+  .spread.dark{background:linear-gradient(158deg,#062028 0%,#031017 72%);color:#EAF4F7}
+  .spread.waterbg{background:#050A0F}
+  .card{background:linear-gradient(172deg,rgba(255,255,255,.058),rgba(255,255,255,.022));border-color:var(--rule)}
+  .display em{color:var(--accent-l)}
+  .kicker{color:var(--accent-l)}
+  .kicker::before{background:var(--accent-l)}
+  .rh-no{color:var(--accent-l)}
+  .dc{color:var(--accent-l)}
+  .brand-t{color:var(--accent-l)}
+  .toc button{color:var(--ink)}
+  .toc-dots{border-bottom-color:var(--rule-d)}
+  .hf-quote .pull{background:linear-gradient(150deg,rgba(255,255,255,.075),rgba(255,255,255,.028))}
+  .band-cap{background:linear-gradient(172deg,rgba(255,255,255,.062),rgba(255,255,255,.024))}
+  .tl-wrap{border-top-color:var(--rule)}
+  .tl-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2)}
+  .tl-item{border-right-color:var(--rule)}
+  .chip{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));color:var(--ink2);border-color:var(--rule)}
+  .chip:hover{background:rgba(23,180,206,.16);color:var(--accent-l)}
+  .disc-list{border-top-color:var(--rule)}
+  .disc-item .icw{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02));border-color:var(--rule);color:var(--accent-l)}
+  .disc-item .icw.green{background:linear-gradient(160deg,rgba(42,211,155,.15),rgba(42,211,155,.04));border-color:rgba(42,211,155,.32);color:var(--green)}
+  .lv.cross{color:#E8BC6E}
+  .tabs{border-bottom-color:var(--rule)}
+  .tab.on{color:var(--ink)}
+  .mapbox{background:linear-gradient(172deg,rgba(255,255,255,.05),rgba(255,255,255,.014))}
+  .mapbox-in{background:linear-gradient(160deg,#0A1A22,#06131A);border-color:var(--rule)}
+  .mcard{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:var(--rule)}
+  .mcard .mph{border-color:var(--rule);background:#0A141A}
+  .mcard.txt{background:linear-gradient(158deg,rgba(23,180,206,.13),rgba(23,180,206,.035))}
+  .mcard.txt blockquote{color:var(--accent-l)}
+  .spirit{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:var(--rule)}
+  .spirit h3{color:var(--accent-l)}
+  .person{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:var(--rule)}
+  .person .icw{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02))}
+  .opts{border-top-color:var(--rule);border-left-color:var(--rule)}
+  .opt{background:linear-gradient(172deg,rgba(255,255,255,.05),rgba(255,255,255,.014));color:var(--ink);border-color:var(--rule)}
+  .opt:hover{background:rgba(23,180,206,.13)}
+  .opt.sel{background:rgba(23,180,206,.17);box-shadow:inset 0 -2px 0 var(--accent-l)}
+  .quiz-actions{border-top-color:var(--rule)}
+  .btn{background:linear-gradient(120deg,var(--accent),var(--accent-l));border-color:transparent;color:#04141A}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--accent-l);border-color:var(--rule-d)}
+  .btn.ghost:hover{background:rgba(23,180,206,.15)}
+  .quiz-result{background:rgba(42,211,155,.07);border-color:rgba(42,211,155,.42)}
+  .quiz-result h3{color:#8FE8C6}
+  .back{background:#05090D}
+  .spot{background:linear-gradient(172deg,#0B141B,#080F15);border-color:var(--rule)}
+  .spot-ph{border-bottom-color:var(--rule)}
+  .spot-ph .stamp{color:#04141A;background:var(--green)}
+  .spot-why{border-top-color:var(--rule)}
+  .course{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:var(--rule)}
+  .course .meta{border-top-color:var(--rule)}
+  .hmap{background:radial-gradient(120% 96% at 50% 2%,#0A1E28 0%,#050C12 70%)}
+  .hmap-plane .prov{fill:#0F2A35;stroke:rgba(95,208,226,.28)}
+  .hmap-tip{background:rgba(6,15,21,.95);color:#EAF4F7;border-color:rgba(120,200,220,.34)}
+  .gb-form input,.gb-form textarea{background:rgba(255,255,255,.05);color:var(--ink);border-color:var(--rule)}
+  .gb-form input::placeholder,.gb-form textarea::placeholder{color:#6E7E88}
+  .gb-note{background:linear-gradient(172deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-color:var(--rule)}
+  .gb-note .av{background:rgba(23,180,206,.18);color:var(--accent-l)}
+  .film{background:#070C11;border-top-color:var(--rule);border-bottom-color:var(--rule)}
+  .campus-meta b{color:var(--accent-l)}
+  .cf-stats b{color:var(--accent-l)}
+  .pfoot{border-top-color:var(--rule)}
+  .folio{color:var(--muted)}
+  .sec-note{color:var(--muted)}
+  .figcap b{color:var(--accent-l)}
+  .mdata b{color:var(--accent-l)}
+  .mapstat b{color:var(--accent-l)}
+  .toc-no{color:var(--accent-l)}
+  .mstamp.green{background:var(--green);color:#04141A}
+  .mstamp.green .ic{stroke:#04141A}
+  .hf-tag{background:linear-gradient(120deg,var(--accent),var(--accent-l));color:#04141A}
+  .hf-tag .ic{stroke:#04141A}
+  .course .ct{background:linear-gradient(120deg,var(--accent),var(--accent-l));color:#04141A}
+  .quiz-result .pill{background:var(--green);color:#04141A}
+  .map-quote{border-left-color:var(--green)}
+  .covernote{border-left-color:var(--green)}
 </style>
 </head>
 <body>
@@ -327,7 +857,6 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="ic-drop" viewBox="0 0 24 24"><path d="M12 2.5c3.5 4.2 6 7.4 6 10.6a6 6 0 0 1-12 0c0-3.2 2.5-6.4 6-10.6Z"/><path d="M9.5 14.5a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
-    <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M15.6 8.4 13.9 13.9 8.4 15.6 10.1 10.1Z"/></symbol>
     <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M12 6.8v5.4l3.6 2.1"/></symbol>
     <symbol id="ic-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5Z"/><path d="m3 13 9 5 9-5"/></symbol>
     <symbol id="ic-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
@@ -338,462 +867,716 @@
     <symbol id="ic-book" viewBox="0 0 24 24"><path d="M4 4.5h6a2.5 2.5 0 0 1 2 2.5v12a2 2 0 0 0-2-2H4Z"/><path d="M20 4.5h-6a2.5 2.5 0 0 0-2 2.5v12a2 2 0 0 1 2-2h6Z"/></symbol>
     <symbol id="ic-cap" viewBox="0 0 24 24"><path d="m12 4 10 5-10 5-10-5Z"/><path d="M6 11v4.5c0 1.6 2.7 3 6 3s6-1.4 6-3V11"/><path d="M22 9v5"/></symbol>
     <symbol id="ic-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+    <symbol id="ic-arrow-l" viewBox="0 0 24 24"><path d="M19 12H6M11 6l-6 6 6 6"/></symbol>
     <symbol id="ic-wave" viewBox="0 0 24 24"><path d="M2 8c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 13c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 18c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/></symbol>
     <symbol id="ic-leaf" viewBox="0 0 24 24"><path d="M4 20c8 0 15-4 16-16C8 4 3 11 4 20Z"/><path d="M4 20c3-5 7-8 12-10"/></symbol>
-    <symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="M3 12h18M12 2.8c2.6 3 2.6 15.4 0 18.4M12 2.8c-2.6 3-2.6 15.4 0 18.4"/></symbol>
     <symbol id="ic-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.4"/><path d="M12 7.4V21M5 12H2.5a9.5 9.5 0 0 0 19 0H19M7 12h10"/></symbol>
     <symbol id="ic-spark" viewBox="0 0 24 24"><path d="M12 2.5 14 9l6.5 2-6.5 2-2 6.5-2-6.5L3.5 11 10 9Z"/></symbol>
     <symbol id="ic-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
     <symbol id="ic-city" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-5h6v5"/></symbol>
+    <symbol id="ic-quote" viewBox="0 0 24 24"><path d="M9 7H5.5a2.5 2.5 0 0 0-2.5 2.5V13h4v4H4M19 7h-3.5A2.5 2.5 0 0 0 13 9.5V13h4v4h-3"/></symbol>
+    <symbol id="ic-image" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="1.5"/><circle cx="8.6" cy="10" r="1.6"/><path d="m3.6 17 4.6-4.4 3.4 3.2 3-2.6 5.8 4.6"/></symbol>
+    <symbol id="ic-camera" viewBox="0 0 24 24"><path d="M3 8.5h3l1.4-2.4h9.2L18 8.5h3v11H3Z"/><circle cx="12" cy="14" r="3.4"/></symbol>
+    <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.2"/><path d="m15.6 8.4-2 5.2-5.2 2 2-5.2Z"/></symbol>
+    <symbol id="ic-portrait" viewBox="0 0 24 24"><circle cx="12" cy="8.4" r="3.8"/><path d="M4.6 20.6a7.4 7.4 0 0 1 14.8 0"/></symbol>
+    <symbol id="ic-play" viewBox="0 0 24 24"><path d="M8 5.5 19 12 8 18.5Z"/></symbol>
+    <symbol id="ic-live" viewBox="0 0 24 24"><path d="M4 18V9M8 18V5M12 18v-6M16 18V7M20 18v-9"/></symbol>
+    <symbol id="ic-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4Z"/></symbol>
   </defs>
 </svg>
 
 <div id="progress"></div>
 
-<!-- ========== 顶部导航 ========== -->
-<header class="topbar" id="topbar">
-  <div class="topbar-in">
-    <a class="brand" href="#hero">
-      <span class="mark"><svg viewBox="0 0 24 24" class="ic-sm" style="stroke:#fff"><use href="#ic-drop"/></svg></span>
-      <span>河海大学<small>H O H A I &nbsp;U N I V E R S I T Y</small></span>
-    </a>
-    <nav class="topnav">
-      <a href="#explore">探索</a>
-      <a href="#timeline">校史</a>
-      <a href="#disciplines">学科</a>
-      <a href="#campus">校园</a>
-      <a href="#spirit">校训</a>
-      <a href="#quiz">测试</a>
-    </nav>
-    <a class="btn" href="#explore">开始探索 <svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></a>
+<!-- ========== 贯穿全站的流动水面底纹 ========== -->
+<div class="waterbg" aria-hidden="true">
+  <video src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+  <span class="waterbg-veil"></span>
+  <canvas class="waterbg-canvas" aria-hidden="true"></canvas>
+</div>
+
+<!-- ========== 刊头 + 栏目按钮条 ========== -->
+<header class="appbar">
+  <a class="brand" href="#cover" data-go="cover">
+    <span class="brand-t">河海大学</span>
+    <span class="brand-s">数字特刊 · 2026</span>
+  </a>
+  <nav class="rail" id="rail" aria-label="栏目直达"></nav>
+  <div class="bar-end">
+    <button class="nbtn" id="prev" aria-label="上一栏"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow-l"/></svg></button>
+    <span class="pageind" id="pageind">01 / 12</span>
+    <button class="nbtn" id="next" aria-label="下一栏"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></button>
   </div>
 </header>
 
-<!-- ========== 侧边导览 ========== -->
-<nav class="dotnav" id="dotnav" aria-label="页面导览">
-  <button data-target="hero" data-label="首页"></button>
-  <button data-target="explore" data-label="一屏探索"></button>
-  <button data-target="timeline" data-label="水脉校史"></button>
-  <button data-target="disciplines" data-label="学科矩阵"></button>
-  <button data-target="campus" data-label="数字校园"></button>
-  <button data-target="numbers" data-label="数字河海"></button>
-  <button data-target="spirit" data-label="校训精神"></button>
-  <button data-target="people" data-label="桃李芬芳"></button>
-  <button data-target="quiz" data-label="契合度测试"></button>
-</nav>
+<!-- ========== 栏目索引 ========== -->
+<nav class="dotnav" id="dotnav" aria-label="栏目索引"></nav>
 
-<!-- ========== HERO ========== -->
-<section class="hero" id="hero">
-  <div class="hero-slogan">治水兴邦<br>河海人</div>
-  <div class="hero-waves">
-    <svg class="wave w1" viewBox="0 0 2880 260" preserveAspectRatio="none"><path d="M0,150 C240,110 480,190 720,150 C960,110 1200,190 1440,150 C1680,110 1920,190 2160,150 C2400,110 2640,190 2880,150 L2880,260 L0,260 Z"/></svg>
-    <svg class="wave w2" viewBox="0 0 2880 260" preserveAspectRatio="none"><path d="M0,175 C240,140 480,210 720,175 C960,140 1200,210 1440,175 C1680,140 1920,210 2160,175 C2400,140 2640,210 2880,175 L2880,260 L0,260 Z"/></svg>
-    <svg class="wave w3" viewBox="0 0 2880 260" preserveAspectRatio="none"><path d="M0,200 C240,172 480,230 720,200 C960,172 1200,230 1440,200 C1680,172 1920,230 2160,200 C2400,172 2640,230 2880,200 L2880,260 L0,260 Z"/></svg>
-  </div>
+<main id="viewer">
 
-  <div class="hero-inner">
-    <div class="container">
-      <span class="eyebrow">Est. 1915 · 百十河海</span>
-      <h1>河海大学<span class="en">H O H A I &nbsp; U N I V E R S I T Y</span></h1>
-      <div class="tag">以水利为特色 · 工科为主 · 多学科协调发展</div>
-      <p class="desc">教育部直属全国重点大学，「双一流」「211 工程」「985 工程优势学科创新平台」建设高校。源于 1915 年张謇创办的河海工程专门学校——中国第一所培养水利人才的高等学府，被誉为「水利高层次创新创业人才培养的摇篮」。</p>
-      <div class="cta">
-        <a class="btn" href="#explore">开始探索河海 <svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></a>
-        <a class="btn ghost" href="#quiz">测一测契合度</a>
-      </div>
-      <div class="hero-stats">
-        <div><b>110</b><span>年办学历程</span></div>
-        <div><b>1915</b><span>建校之年</span></div>
-        <div><b>3</b><span>座校区 · 南京 / 常州</span></div>
-        <div><b>双一流</b><span>国家建设高校</span></div>
-      </div>
+<!-- ========== 封面 ========== -->
+<section class="page cover" data-spread data-name="封面" id="cover">
+  <video class="cover-v" src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+  <div class="cover-veil"></div>
+  <div class="cover-in">
+    <div class="cv-top">
+      <span class="cv-pill">Hohai University</span>
+      <span class="cv-meta">创刊号 · Vol.110 · 二〇二六年 · 南京</span>
     </div>
-  </div>
-
-  <div class="scroll-cue"><span></span>向下滚动探索</div>
-</section>
-
-<!-- ========== BENTO 探索面板 ========== -->
-<section id="explore">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Explore</span>
-      <h2>一屏探索河海</h2>
-      <p>把「河海是谁」浓缩成一张可探索的拼图：核心名片、王牌学科、百十年校史、三座校区、校训精神——点击任意卡片进入对应模块。</p>
+    <div class="cv-main">
+      <div class="cv-kicker">中国水利高等教育的摇篮</div>
+      <h1 class="cv-title">治水兴邦</h1>
+      <h1 class="cv-title thin">河海人</h1>
+      <p class="cv-en">Established 1915 · Nanjing &amp; Changzhou</p>
+      <p class="cv-stand">以水利为特色、工科为主、多学科协调发展——从张謇创办的河海工程专门学校，到今天的一校三区，一百一十年，一条奔涌的河。</p>
     </div>
-
-    <div class="bento">
-      <!-- 学校名片 -->
-      <article class="card b-feature reveal" data-goto="timeline">
-        <div class="iconwrap"><svg class="ic ic-lg" viewBox="0 0 24 24"><use href="#ic-flag"/></svg></div>
-        <span class="kicker">学校名片</span>
-        <h3>治水兴邦，百十河海</h3>
-        <p>源于 1915 年张謇创办的河海工程专门学校，开创中国水利高等教育先河。百余年来在治水兴邦的奋斗历程中发展壮大。</p>
-        <div class="tags">
-          <span class="tagchip">双一流</span><span class="tagchip">211 工程</span>
-          <span class="tagchip">985 优势学科创新平台</span><span class="tagchip">教育部直属</span>
-          <span class="tagchip">研究生院</span>
-        </div>
-      </article>
-
-      <!-- 王牌学科 -->
-      <article class="card b-discipline reveal" data-goto="disciplines">
-        <span class="kicker">王牌学科</span>
-        <h3>水利工程</h3>
-        <p>以水利工程国家一级重点学科为核心，布局水文水资源、水环境、水生态、水安全、水信息等方向，形成「理论—技术—管理」三位一体的学科结构。</p>
-        <div class="chips" style="margin-top:auto">
-          <span class="chip">水文水资源</span><span class="chip">水环境</span>
-          <span class="chip">水安全</span><span class="chip">水信息</span>
-        </div>
-        <span class="linkrow">查看学科矩阵 <svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></span>
-      </article>
-
-      <!-- 统计卡 -->
-      <article class="card stat-card reveal">
-        <b>110</b><span>年办学历程 · 1915 至今</span>
-      </article>
-      <article class="card stat-card reveal">
-        <b class="green">3</b><span>座校区 · 西康路 / 江宁 / 常州</span>
-      </article>
-
-      <!-- 校区 -->
-      <article class="card reveal" data-goto="campus">
-        <div class="iconwrap"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-pin"/></svg></div>
-        <span class="kicker">数字校园</span>
-        <h3>一校三区</h3>
-        <p>南京 · 西康路、江宁，常州 · 常州校区</p>
-      </article>
-
-      <!-- 校训 -->
-      <article class="card reveal" data-goto="spirit">
-        <div class="iconwrap green"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-medal"/></svg></div>
-        <span class="kicker">校训精神</span>
-        <h3>四句话，一条河</h3>
-        <div class="motto-mini">
-          <span>艰苦朴素</span><span>实事求是</span><span>严格要求</span><span>勇于探索</span>
-        </div>
-      </article>
-
-      <!-- 江河标语 -->
-      <article class="card fill reveal" style="grid-column:span 2;grid-row:span 2" data-goto="people">
-        <svg class="ic ic-lg" viewBox="0 0 24 24" style="opacity:.9"><use href="#ic-wave"/></svg>
-        <h3 style="font-size:28px;margin-top:14px">哪里有水，<br>哪里就有河海人</h3>
-        <p style="margin-top:12px;font-size:14px">百余年来，大批河海毕业生奔赴江河湖海，活跃在水利、能源、环境、海洋、交通等领域，成为行业骨干与领军人才。</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:auto">
-          <span class="tagchip" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)">水利</span>
-          <span class="tagchip" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)">能源</span>
-          <span class="tagchip" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)">环境</span>
-          <span class="tagchip" style="background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.3)">海洋</span>
-        </div>
-      </article>
-
-      <!-- 交叉学科 -->
-      <article class="card mint reveal" style="grid-column:span 2" data-goto="disciplines">
-        <div style="display:flex;align-items:center;gap:12px">
-          <svg class="ic ic-lg" viewBox="0 0 24 24"><use href="#ic-spark"/></svg>
-          <h3 style="margin:0">智慧水利 · 人工智能</h3>
-        </div>
-        <p style="margin-top:10px">以水利工程学科为引领，开拓智慧水利、人工智能等交叉方向，让传统水利拥抱数字时代。</p>
-      </article>
-
-      <!-- CTA -->
-      <article class="card cta reveal" style="grid-column:span 2">
-        <span class="kicker">开始你的探索</span>
-        <h3 style="font-size:22px">不知道从哪看？先做个小测试</h3>
-        <a class="btn" href="#quiz" style="align-self:flex-start">测一测契合度 <svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></a>
-      </article>
+    <div class="cv-foot">
+      <span class="cv-stat"><b>110</b><span>年办学历程</span></span>
+      <span class="cv-stat"><b>3</b><span>座校区</span></span>
+      <span class="cv-stat"><b>1915</b><span>建校之年</span></span>
+      <span class="cv-cue"><span></span>选择栏目 · 顺流而下</span>
+      <button class="cbtn light" data-go="contents" aria-label="进入本期"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></button>
     </div>
   </div>
 </section>
 
-<!-- ========== 水脉时间轴 ========== -->
-<section id="timeline">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Timeline · 水脉</span>
-      <h2>百十年，一条奔涌的河</h2>
-      <p>从 1915 到 2025，河海的每一步都与中国水利事业同频共振。左右拖动，顺流而下。</p>
+<!-- ========== 目录 ========== -->
+<section class="page spread" data-spread data-name="目录" id="contents">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">目录</span>
+      <span class="rh-name">本期导读</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Contents</span>
     </div>
-    <div class="timeline-wrap reveal">
-      <div class="timeline">
-        <div class="tl-line"></div>
-        <div class="tl-item"><div class="tl-year">1915<small>创 立</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>河海工程专门学校</h4><p>由近代爱国实业家、教育家张謇创办，中国第一所培养水利人才的高等学府，开创中国水利高等教育先河。</p></div></div>
-        <div class="tl-item"><div class="tl-year">1960<small>全 国 重 点</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>全国重点高校</h4><p>被中共中央认定为全国重点高校，办学地位进一步确立。</p></div></div>
-        <div class="tl-item"><div class="tl-year">1985<small>复 名</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>复名「河海大学」</h4><p>改革开放春风中复名，校名由邓小平同志亲笔题写。</p></div></div>
-        <div class="tl-item"><div class="tl-year">1996<small>2 1 1</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>入选「211 工程」</h4><p>被确定为国家「211 工程」重点建设高校。</p></div></div>
-        <div class="tl-item"><div class="tl-year">2008<small>平 台</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>优势学科创新平台</h4><p>经教育部批准实施「优势学科创新平台」建设。</p></div></div>
-        <div class="tl-item"><div class="tl-year">2017<small>双 一 流</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>入选国家「双一流」</h4><p>入选国家「双一流」建设高校，迈向新的发展阶段。</p></div></div>
-        <div class="tl-item"><div class="tl-year">2025<small>百 十 校 庆</small></div><div class="tl-dot"></div>
-          <div class="tl-body"><h4>百十校庆</h4><p>建校 110 周年，桃李芬芳满天下，治水兴邦续新篇。</p></div></div>
-      </div>
+    <h2 class="display reveal">十二页河海，<em>顺流而下</em></h2>
+    <p class="standfirst reveal">如果你第一次听说河海，不必从厚重的校史读起。这本特刊把「河海是谁」拆成十二个栏目：点顶部按钮或下方目录，直接翻到你想看的那一页——封面与页间的流动水面，是这本刊的底色。</p>
+
+    <ol class="toc reveal">
+<li><button data-go="s01"><span class="toc-no">01</span><span class="toc-body"><span class="toc-title">治水兴邦，百年河海</span><span class="toc-sub">学校名片 · 一所大学的来历</span></span><span class="toc-dots"></span><span class="toc-page">04</span></button></li>
+<li><button data-go="zj"><span class="toc-no">02</span><span class="toc-body"><span class="toc-title">张謇 · 逝世一百周年</span><span class="toc-sub">创办人 · 一人兴水利，百年河海由此始</span></span><span class="toc-dots"></span><span class="toc-page">10</span></button></li>
+<li><button data-go="s02"><span class="toc-no">03</span><span class="toc-body"><span class="toc-title">百十年，一条奔涌的河</span><span class="toc-sub">水脉 · 校史年表</span></span><span class="toc-dots"></span><span class="toc-page">16</span></button></li>
+<li><button data-go="s13"><span class="toc-no">04</span><span class="toc-body"><span class="toc-title">一条胶片，三代水的人</span><span class="toc-sub">院士团队 · 水利泰斗 · 治水先贤</span></span><span class="toc-dots"></span><span class="toc-page">52</span></button></li>
+<li><button data-go="s07"><span class="toc-no">05</span><span class="toc-body"><span class="toc-title">四句话，一条河的精神</span><span class="toc-sub">校训精神 · 河海人的底色</span></span><span class="toc-dots"></span><span class="toc-page">22</span></button></li>
+<li><button data-go="s10"><span class="toc-no">06</span><span class="toc-body"><span class="toc-title">数字里的河海，正在发生与生长</span><span class="toc-sub">实时数据看板 · 交叉创新成果</span></span><span class="toc-dots"></span><span class="toc-page">34</span></button></li>
+<li><button data-go="s15"><span class="toc-no">07</span><span class="toc-body"><span class="toc-title">把校园，装进一颗蓝色星球</span><span class="toc-sub">全景校园 · 地球 / 沉浸 VR</span></span><span class="toc-dots"></span><span class="toc-page">64</span></button></li>
+<li><button data-go="s16"><span class="toc-no">08</span><span class="toc-body"><span class="toc-title">值得打卡的几处校园角落</span><span class="toc-sub">校园打卡点 · 机位与理由</span></span><span class="toc-dots"></span><span class="toc-page">70</span></button></li>
+<li><button data-go="s17"><span class="toc-no">09</span><span class="toc-body"><span class="toc-title">这些课，读懂一条河</span><span class="toc-sub">特色课程 · 课堂里的水利</span></span><span class="toc-dots"></span><span class="toc-page">76</span></button></li>
+<li><button data-go="s18"><span class="toc-no">10</span><span class="toc-body"><span class="toc-title">一批河海人，半部治水图</span><span class="toc-sub">校友治水地图 · 真实地图 + 3D 柱</span></span><span class="toc-dots"></span><span class="toc-page">82</span></button></li>
+<li><button data-go="s20"><span class="toc-no">11</span><span class="toc-body"><span class="toc-title">把想说的话，留在河边</span><span class="toc-sub">校友留言板 · 本机保存</span></span><span class="toc-dots"></span><span class="toc-page">94</span></button></li>
+<li><button data-go="s09"><span class="toc-no">12</span><span class="toc-body"><span class="toc-title">测一测，你和河海的契合度</span><span class="toc-sub">互动 · 三道题读懂方向</span></span><span class="toc-dots"></span><span class="toc-page">28</span></button></li>
+    </ol>
+
+    <div class="covernote reveal">
+      <h3>编者按</h3>
+      <p>河海大学是一所以水利为特色的学校，但它并不只属于水利。这本特刊想做的事很简单：不给结论，只给线索——把学校的历史、学科、校区和精神，铺成一条可以自己走下去的河。</p>
     </div>
+    <div class="toc-cta reveal">
+      <button class="cbtn sm" data-go="s01" aria-label="从第一页开始"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></button>
+      <span class="toc-cta-t">从第一页开始，顺流而下</span>
+    </div>
+    <span class="folio">目录</span>
   </div>
 </section>
 
-<!-- ========== 学科矩阵 ========== -->
-<section id="disciplines">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Disciplines · 学科矩阵</span>
-      <h2>以水为核，多学科共生</h2>
-      <p>以水利工程国家一级重点学科为核心，向水环境的各个方向延展，并与土木、能源、信息等学科交叉融合。</p>
+<!-- ========== 01 学校 ========== -->
+<section class="page spread paper" data-spread data-name="01 学校" id="s01">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">01</span>
+      <span class="rh-name">学校名片</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">The University</span>
     </div>
-    <div class="disc-grid">
-      <div class="panel reveal">
-        <h3>学科方向布局</h3>
-        <p class="sub">示意图 · 演示数据，仅用于展示版面设计，非官方学科评估结果</p>
-        <figure style="margin:14px 0 0">
-          <div id="chart-radar" style="width:100%;min-height:380px"></div>
-          <figcaption style="font-size:12px;color:var(--muted);text-align:center;margin-top:6px">图 1：河海大学学科方向布局示意图（演示数据）</figcaption>
-        </figure>
-      </div>
-      <div class="reveal">
-        <div class="disc-list">
-          <div class="disc-item">
-            <div class="iconwrap"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-drop"/></svg></div>
-            <div><h4>水利工程</h4><p>国家一级重点学科，学校立校之本与核心优势</p></div>
-            <span class="lv core">核心</span>
-          </div>
-          <div class="disc-item">
-            <div class="iconwrap"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-wave"/></svg></div>
-            <div><h4>水文水资源</h4><p>流域水循环、水资源调配与水旱灾害防治</p></div>
-            <span class="lv core">核心</span>
-          </div>
-          <div class="disc-item">
-            <div class="iconwrap green"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-leaf"/></svg></div>
-            <div><h4>水环境 · 水生态</h4><p>水污染治理、生态修复与流域环境健康</p></div>
-            <span class="lv sup">支撑</span>
-          </div>
-          <div class="disc-item">
-            <div class="iconwrap"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-anchor"/></svg></div>
-            <div><h4>港口海岸 · 海洋</h4><p>港口航道、海岸工程与近海海洋工程</p></div>
-            <span class="lv sup">支撑</span>
-          </div>
-          <div class="disc-item">
-            <div class="iconwrap"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-city"/></svg></div>
-            <div><h4>土木 · 交通 · 能源</h4><p>土木与交通、能源与电气等工科领域协同发展</p></div>
-            <span class="lv sup">支撑</span>
-          </div>
-          <div class="disc-item">
-            <div class="iconwrap green"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-spark"/></svg></div>
-            <div><h4>智慧水利 · 人工智能</h4><p>数字孪生流域、水信息与 AI 交叉新方向</p></div>
-            <span class="lv cross">交叉</span>
-          </div>
-        </div>
-        <div class="chips">
-          <span class="chip">水文水资源学院</span><span class="chip">水利水电学院</span>
-          <span class="chip">港口海岸与近海工程学院</span><span class="chip">土木与交通学院</span>
-          <span class="chip">环境学院</span><span class="chip">能源与电气学院</span>
-          <span class="chip">计算机与信息学院</span><span class="chip">海洋学院</span>
-          <span class="chip">地球科学与工程学院</span><span class="chip">商学院</span>
-        </div>
-      </div>
+
+    <span class="kicker reveal">封面故事</span>
+    <h2 class="display reveal">治水兴邦，<br>百年河海</h2>
+    <p class="standfirst reveal">教育部直属全国重点大学，「双一流」「211 工程」「985 工程优势学科创新平台」建设高校，设有研究生院。它的名字里有两条河，也有一个国家的治水史。</p>
+
+    <div class="cols reveal">
+      <p><span class="dc">一</span>九一五年，近代爱国实业家、教育家张謇在南京创办河海工程专门学校——这是中国第一所培养水利人才的高等学府，开创了中国水利高等教育的先河。校名取「河」与「海」，既是办学方向，也是使命所在：治水，兴邦。</p>
+      <p>此后的一百一十年，学校在治水兴邦的奋斗历程中发展壮大。1960 年被认定为全国重点高校；1985 年复名「河海大学」，校名由邓小平同志亲笔题写；1996 年入选「211 工程」；2008 年实施「优势学科创新平台」建设；2017 年入选国家「双一流」建设高校。</p>
+      <p>今天的河海，是一所以水利为特色、工科为主、多学科协调发展的大学，在南京、常州两地办学，形成一校三区的格局，被誉为「水利高层次创新创业人才培养的摇篮」。</p>
+      <p>对不熟悉它的人来说，最快的理解方式是看它做的事：大江大河的治理、水资源的调配、水环境的修复、港口海岸的建设、数字孪生流域的探索——这些都写在这所学校的学科与校友名录里。</p>
     </div>
+  </div>
+
+  <div class="wrap">
+    <span class="folio">04</span>
   </div>
 </section>
 
-<!-- ========== 数字校园 ========== -->
-<section id="campus">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Campus · 数字校园</span>
-      <h2>一校三区，各有风景</h2>
-      <p>学校在南京市、常州市设有三座校区。切换查看各校区的定位与特色（平面布局为示意）。</p>
+<!-- ========== 02 张謇 ========== -->
+<section class="page spread paper" data-spread data-name="02 张謇" id="zj">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">02</span>
+      <span class="rh-name">张謇 · 逝世百年</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Zhang Jian · 1926—2026</span>
     </div>
+    <span class="kicker reveal">创办人 · 逝世一百周年</span>
+    <h2 class="display reveal">一人兴水利，<em>百年河海由此始</em></h2>
+    <p class="standfirst reveal">1915 年，张謇在南京创办河海工程专门学校，开出中国水利高等教育之先河。2026 年，正值张謇先生逝世一百周年——这一栏，写给那个把钱与心力投向江海的人。</p>
 
-    <div class="tabs reveal">
-      <button class="tab on" data-campus="xk">西康路校区</button>
-      <button class="tab" data-campus="jn">江宁校区</button>
-      <button class="tab" data-campus="cz">常州校区</button>
-    </div>
-
-    <!-- 西康路 -->
-    <div class="campus-pane on" id="pane-xk">
-      <div class="campus-info reveal">
-        <h3>西康路校区</h3>
-        <div class="addr"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-pin"/></svg> 江苏省南京市鼓楼区西康路 1 号</div>
-        <p>学校办学起点与标志性校区，坐落于南京主城，历史底蕴深厚，是「河海」记忆的原点。</p>
-        <div class="campus-meta">
-          <div><b>校本部</b><span>校区定位</span></div>
-          <div><b>主城</b><span>南京 · 鼓楼</span></div>
-        </div>
-      </div>
-      <div class="mapbox reveal">
-        <svg viewBox="0 0 520 340" aria-label="西康路校区布局示意">
-          <rect width="520" height="340" fill="none"/>
-          <path d="M0 210 C120 190 200 240 320 214 C420 192 470 214 520 202 L520 340 L0 340 Z" fill="#CFE9F6" opacity=".7"/>
-          <text x="26" y="322" font-size="12" fill="#5C7787">秦淮河 · 示意水系</text>
-          <rect x="70" y="60" width="150" height="90" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="145" y="108" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">教学主楼</text>
-          <rect x="250" y="60" width="90" height="90" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="295" y="108" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">图书馆</text>
-          <rect x="365" y="60" width="100" height="90" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="415" y="108" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">实验室</text>
-          <rect x="70" y="170" width="230" height="44" rx="10" fill="#F3FAFD" stroke="#DCEAF2"/>
-          <text x="185" y="197" font-size="13" text-anchor="middle" fill="#5C7787">中心广场 · 步道</text>
-          <circle cx="415" cy="192" r="22" fill="#22C08A" opacity=".18"/>
-          <circle cx="415" cy="192" r="7" fill="#22C08A"/>
-          <text x="415" y="238" font-size="12" text-anchor="middle" fill="#0E8F62" font-weight="700">校门</text>
-        </svg>
-      </div>
-    </div>
-
-    <!-- 江宁 -->
-    <div class="campus-pane" id="pane-jn">
-      <div class="campus-info">
-        <h3>江宁校区</h3>
-        <div class="addr"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-pin"/></svg> 江苏省南京市江宁区</div>
-        <p>现代化主校区，教学科研设施集中、空间开阔，是学校当前人才培养与科学研究的重要承载区。</p>
-        <div class="campus-meta">
-          <div><b>主校区</b><span>校区定位</span></div>
-          <div><b>江宁</b><span>南京 · 江宁</span></div>
-        </div>
-      </div>
-      <div class="mapbox">
-        <svg viewBox="0 0 520 340" aria-label="江宁校区布局示意">
-          <path d="M0 220 C140 200 240 250 360 222 C440 204 480 224 520 212 L520 340 L0 340 Z" fill="#CFE9F6" opacity=".7"/>
-          <text x="26" y="322" font-size="12" fill="#5C7787">生态水系 · 示意水体</text>
-          <rect x="60" y="56" width="120" height="76" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="120" y="99" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">教学楼群</text>
-          <rect x="196" y="56" width="120" height="76" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="256" y="99" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">图书馆</text>
-          <rect x="332" y="56" width="120" height="76" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="392" y="99" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">科创中心</text>
-          <rect x="60" y="160" width="392" height="38" rx="10" fill="#F3FAFD" stroke="#DCEAF2"/>
-          <text x="256" y="185" font-size="13" text-anchor="middle" fill="#5C7787">主干道 · 绿化带</text>
-          <circle cx="120" cy="230" r="22" fill="#22C08A" opacity=".18"/>
-          <circle cx="120" cy="230" r="7" fill="#22C08A"/>
-          <text x="120" y="272" font-size="12" text-anchor="middle" fill="#0E8F62" font-weight="700">生活区</text>
-        </svg>
-      </div>
-    </div>
-
-    <!-- 常州 -->
-    <div class="campus-pane" id="pane-cz">
-      <div class="campus-info">
-        <h3>常州校区</h3>
-        <div class="addr"><svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-pin"/></svg> 江苏省常州市</div>
-        <p>扎根常州、服务长三角，推进产教融合与协同育人，探索校地、校企合作的人才培养新模式。</p>
-        <div class="campus-meta">
-          <div><b>产教融合</b><span>校区定位</span></div>
-          <div><b>常州</b><span>江苏 · 常州</span></div>
-        </div>
-      </div>
-      <div class="mapbox">
-        <svg viewBox="0 0 520 340" aria-label="常州校区布局示意">
-          <path d="M0 214 C130 196 230 244 350 216 C430 198 480 218 520 208 L520 340 L0 340 Z" fill="#CFE9F6" opacity=".7"/>
-          <text x="26" y="322" font-size="12" fill="#5C7787">校园水景 · 示意</text>
-          <rect x="80" y="60" width="160" height="86" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="160" y="108" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">实训中心</text>
-          <rect x="266" y="60" width="176" height="86" rx="10" fill="#fff" stroke="#DCEAF2"/>
-          <text x="354" y="108" font-size="13" text-anchor="middle" fill="#0B6E99" font-weight="700">产学研基地</text>
-          <rect x="80" y="166" width="362" height="38" rx="10" fill="#F3FAFD" stroke="#DCEAF2"/>
-          <text x="261" y="191" font-size="13" text-anchor="middle" fill="#5C7787">shared space · 共享空间</text>
-          <circle cx="410" cy="234" r="22" fill="#22C08A" opacity=".18"/>
-          <circle cx="410" cy="234" r="7" fill="#22C08A"/>
-          <text x="410" y="276" font-size="12" text-anchor="middle" fill="#0E8F62" font-weight="700">创新之门</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 数字河海 ========== -->
-<section id="numbers">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">By the numbers</span>
-      <h2>数字里的河海</h2>
-      <p>几个数字，勾勒出这所百年学府的轮廓。</p>
-    </div>
-    <div class="num-grid">
-      <div class="num reveal"><b><span class="count" data-target="110">0</span><i>年</i></b><span>办学历程（1915 起）</span></div>
-      <div class="num reveal"><b><span class="count" data-target="1915">0</span></b><span>建校之年</span></div>
-      <div class="num reveal"><b><span class="count" data-target="3">0</span><i>座</i></b><span>校区 · 南京 / 常州</span></div>
-      <div class="num reveal"><b><span class="count" data-target="1">0</span><i>所</i></b><span>中国第一所培养水利人才的高等学府</span></div>
-    </div>
-    <div class="badges reveal">
-      <span class="badge">双一流建设高校</span>
-      <span class="badge">211 工程</span>
-      <span class="badge">985 优势学科创新平台</span>
-      <span class="badge">教育部直属</span>
-      <span class="badge">设研究生院</span>
-    </div>
-  </div>
-</section>
-
-<!-- ========== 校训精神 ========== -->
-<section id="spirit">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Spirit · 校训</span>
-      <h2>四句话，一条河的精神</h2>
-      <p>艰苦朴素、实事求是、严格要求、勇于探索——这是河海在创业与奋斗历程中沉淀下来的精神写照。</p>
-    </div>
     <div class="spirit-grid">
-      <div class="spirit reveal"><div class="num-big">01</div><h3>艰苦朴素</h3><p>学校创业与奋斗历程的精神写照，也是师生的生活准则——能吃苦，方能在水利水电事业中有所作为。</p></div>
-      <div class="spirit reveal"><div class="num-big">02</div><h3>实事求是</h3><p>倡导「知之为知之，不知为不知」的科研态度，老老实实做学问、做工程。</p></div>
-      <div class="spirit reveal"><div class="num-big">03</div><h3>严格要求</h3><p>对待学习和工作的高标准，一丝不苟、精益求精。</p></div>
-      <div class="spirit reveal"><div class="num-big">04</div><h3>勇于探索</h3><p>敢为人先、不懈求索的创新品格，在未知的水域中开辟新航路。</p></div>
+      <div class="spirit reveal"><div class="num-big">1853 — 1926</div><h3>南通之子</h3><p>江苏南通人，清末状元，授翰林院修撰；近代著名实业家、教育家，一生创办企业二十余家、学校三百七十余所。</p></div>
+      <div class="spirit reveal"><div class="num-big">实 业</div><h3>实业救国</h3><p>创办大生纱厂等实业，主张「以实业养教育」，把赚来的钱又一次次投回教育与水利。</p></div>
+      <div class="spirit reveal"><div class="num-big">治 水</div><h3>治水导淮</h3><p>1914 年兼任全国水利局总裁，力主治水导淮。他深知：治水之难，难在无人才。</p></div>
+      <div class="spirit reveal"><div class="num-big">储 才</div><h3>储才为急</h3><p>「大工将施，储才为急」——1915 年创办河海工程专门学校，中国第一所培养水利人才的高等学府。</p></div>
     </div>
+  </div>
+
+  <figure class="band reveal">
+    <div class="band-media">
+      <video class="band-v" src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <span class="band-veil"></span>
+      <div class="wrap band-q">
+        <b>「大工将施，储才为急。」</b>
+        <span>Zhang Jian · 办学宗旨</span>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="band-cap card soft green">
+        <b>百年</b>
+        <span>1926 年 8 月 24 日（农历七月十七），张謇病逝；2026 年，恰逢先生逝世一百周年。他创办的学堂，已长成一条奔涌的河。</span>
+      </div>
+    </div>
+  </figure>
+
+  <div class="wrap">
+    <div class="reveal">
+      <div class="tl-wrap">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-year">1853</div><span class="tl-tag">出 生</span><h4>生于江苏南通</h4><p>后来成为清末状元、近代实业家与教育家。</p></div>
+          <div class="tl-item"><div class="tl-year">1894</div><span class="tl-tag">状 元</span><h4>恩科会试状元</h4><p>授翰林院修撰，步入时代舞台。</p></div>
+          <div class="tl-item"><div class="tl-year">1914</div><span class="tl-tag">水 利</span><h4>兼任全国水利局总裁</h4><p>力主治水导淮，深感水利人才之匮乏。</p></div>
+          <div class="tl-item"><div class="tl-year">1915</div><span class="tl-tag">创 办</span><h4>河海工程专门学校</h4><p>中国第一所培养水利人才的高等学府，河海大学由此发端。</p></div>
+          <div class="tl-item"><div class="tl-year">1926</div><span class="tl-tag">逝 世</span><h4>八月二十四日病逝</h4><p>农历七月十七，享年七十三岁。</p></div>
+          <div class="tl-item"><div class="tl-year">2026</div><span class="tl-tag">百 年</span><h4>逝世一百周年</h4><p>先生已去百年，河海仍在奔流。</p></div>
+        </div>
+      </div>
+      <div class="tl-hint">← 左右拖动查看生平 →</div>
+    </div>
+    <p class="sec-note">以上生平信息整理自河海大学官网与张謇相关公开资料；如有出入，以官方发布为准。</p>
+    <span class="folio">10</span>
   </div>
 </section>
 
-<!-- ========== 桃李芬芳 ========== -->
-<section id="people">
-  <div class="container">
-    <div class="sec-head reveal">
-      <span class="eyebrow">People · 河海人</span>
-      <h2>桃李芬芳，江河为证</h2>
-      <p>百余年来，一批批河海人奔赴江、河、湖、海，成为水利与相关领域的骨干力量。</p>
+<!-- ========== 03 水脉 ========== -->
+<section class="page spread" data-spread data-name="03 水脉" id="s02">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">03</span>
+      <span class="rh-name">水脉</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Timeline</span>
     </div>
-    <div class="people-grid">
-      <div class="person reveal"><div class="iconwrap"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-drop"/></svg></div><h4>水利水电</h4><p>投身大江大河治理与水利水电工程建设一线。</p></div>
-      <div class="person reveal"><div class="iconwrap green"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-leaf"/></svg></div><h4>环境生态</h4><p>守护水环境与水生态，让碧水长流。</p></div>
-      <div class="person reveal"><div class="iconwrap"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-anchor"/></svg></div><h4>海岸海洋</h4><p>在港口、海岸与近海工程中经略蓝色国土。</p></div>
-      <div class="person reveal"><div class="iconwrap green"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-spark"/></svg></div><h4>智慧水利</h4><p>用数据与模型赋能传统水利，探索数字孪生流域。</p></div>
+    <span class="kicker reveal">年表</span>
+    <h2 class="display reveal">百十年，<em>一条奔涌的河</em></h2>
+    <p class="standfirst reveal">从 1915 到 2025，河海的每一步都与中国水利事业同频共振。自左向右拖动年表，顺流而下。</p>
+
+    <div class="reveal">
+      <div class="tl-wrap">
+        <div class="tl">
+          <div class="tl-item">
+            <div class="tl-year">1915</div>
+            <span class="tl-tag">创 立</span>
+            <h4>河海工程专门学校</h4>
+            <p>由近代爱国实业家、教育家张謇创办，中国第一所培养水利人才的高等学府，开创中国水利高等教育先河。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">1960</div>
+            <span class="tl-tag">全 国 重 点</span>
+            <h4>全国重点高校</h4>
+            <p>被中共中央认定为全国重点高校，办学地位进一步确立。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">1985</div>
+            <span class="tl-tag">复 名</span>
+            <h4>复名「河海大学」</h4>
+            <p>改革开放春风中复名，校名由邓小平同志亲笔题写。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">1996</div>
+            <span class="tl-tag">2 1 1</span>
+            <h4>入选「211 工程」</h4>
+            <p>被确定为国家「211 工程」重点建设高校。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2008</div>
+            <span class="tl-tag">平 台</span>
+            <h4>优势学科创新平台</h4>
+            <p>经教育部批准实施「优势学科创新平台」建设。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2017</div>
+            <span class="tl-tag">双 一 流</span>
+            <h4>入选国家「双一流」</h4>
+            <p>入选国家「双一流」建设高校，迈向新的发展阶段。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2025</div>
+            <span class="tl-tag">百 十 校 庆</span>
+            <h4>百十校庆</h4>
+            <p>建校 110 周年，桃李芬芳满天下，治水兴邦续新篇。</p>
+          </div>
+        </div>
+      </div>
+      <div class="tl-hint">← 左右拖动查看完整年表 →</div>
     </div>
+  </div>
+
+  <!-- 水带：板块收尾处的流动水面 -->
+  <figure class="band reveal">
+    <div class="band-media">
+      <video class="band-v" src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <span class="band-veil"></span>
+      <div class="wrap band-q">
+        <b>从一条河的名字开始，<br>走到一片海的辽阔。</b>
+        <span>Flowing water · 水脉</span>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="band-cap card soft">
+        <b>水带</b>
+        <span>背景为真实流动水面影像。一百一十年，学校的每一次转身，都发生在水的旁边。</span>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- ========== 04 胶片 ========== -->
+<section class="page spread" data-spread data-name="04 胶片" id="s13">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">04</span>
+      <span class="rh-name">人物胶片</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">People · Film Roll</span>
+    </div>
+    <span class="kicker reveal">创办先贤 · 院士团队 · 水利泰斗 · 治水校友</span>
+    <h2 class="display reveal">一卷胶片，<em>三代河海人</em></h2>
+    <p class="standfirst reveal">把人物放进一卷电影胶片，按序滚动——从创办河海的先贤，到两院院士团队，再到扎根江河一线的水利泰斗与治水校友。以下人物照片与事迹均取自河海大学官网公开资料。</p>
+  </div>
+
+  <div class="film reveal" id="film">
+    <div class="film-stage" id="film-stage">
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">创办人</span><img src="assets/official/p_zj.jpg" alt="张謇 肖像" loading="lazy"><span class="ph-role">1853—1926 · 河海工程专门学校创办者</span></div>
+        <figcaption><b>张謇</b><i class="ph-years">1853—1926</i>清末状元，称实业、教育为「富强之大本」，1915 年创办河海工程专门学校，中国水利高等教育由此发端。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">办学先贤</span><img src="assets/official/p_hyb.jpg" alt="黄炎培 肖像" loading="lazy"><span class="ph-role">1878—1965 · 学校筹备主任</span></div>
+        <figcaption><b>黄炎培</b><i class="ph-years">1878—1965</i>河海工程专门学校筹备主任，早年主持学校筹建；后为中国近代著名职业教育家。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">首任校长</span><img src="assets/official/p_xzn.jpg" alt="许肇南 肖像" loading="lazy"><span class="ph-role">1886—1960 · 河海工程专门学校第一任校长</span></div>
+        <figcaption><b>许肇南</b><i class="ph-years">1886—1960</i>河海工程专门学校第一任校长，留学日、美，主持校务期间亲自教授多门课程。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">水利泰斗</span><img src="assets/official/p_lyz.jpg" alt="李仪祉 肖像" loading="lazy"><span class="ph-role">1882—1938 · 教务主任、教授</span></div>
+        <figcaption><b>李仪祉</b><i class="ph-years">1882—1938</i>河海工程专门学校教务主任，1909 年赴德攻读水利；被中国水利界公认为理论与实践贡献最大的近代水利专家。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">治水校友</span><img src="assets/official/p_sbx.jpg" alt="沈百先 肖像" loading="lazy"><span class="ph-role">1896—1990 · 1915 年入学</span></div>
+        <figcaption><b>沈百先</b><i class="ph-years">1896—1990</i>1915 年考入河海工程专门学校，后任中国水利工程学会会长、国民政府水利部政务次长。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">水利泰斗</span><img src="assets/official/p_xukai.jpg" alt="须恺 肖像" loading="lazy"><span class="ph-role">1900—1970 · 1915 年入学</span></div>
+        <figcaption><b>须恺</b><i class="ph-years">1900—1970</i>1915 年考入河海，后任中央大学水利系主任；新中国成立后任中国水利学会第一、二届理事长。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">治水校友</span><img src="assets/official/p_zwt.jpg" alt="张闻天 肖像" loading="lazy"><span class="ph-role">1900—1976 · 1917 年入学</span></div>
+        <figcaption><b>张闻天</b><i class="ph-years">1900—1976</i>1917 年考入河海工程专门学校，在校接触并接受马克思主义，是南京及江苏地区传播马克思主义第一人。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">办学先贤</span><img src="assets/official/p_fzy.jpg" alt="冯仲云 肖像" loading="lazy"><span class="ph-role">1907—1967 · 华东水利学院第二任院长</span></div>
+        <figcaption><b>冯仲云</b><i class="ph-years">1907—1967</i>曾任中共北满省委书记、东北抗日联军第三路军政委；新中国成立后任水利电力部副部长。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">院士团队</span><img src="assets/official/p_qzy.jpg" alt="钱正英 肖像" loading="lazy"><span class="ph-role">1923—2022 · 华东水利学院首任院长</span></div>
+        <figcaption><b>钱正英</b><i class="ph-years">1923—2022</i>中国工程院资深院士，华东水利学院首任院长，我国水利和电力战线的杰出领导人。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">院士团队</span><img src="assets/official/p_whz.jpg" alt="汪胡桢 肖像" loading="lazy"><span class="ph-role">1897—1989 · 中国科学院院士</span></div>
+        <figcaption><b>汪胡桢</b><i class="ph-years">1897—1989</i>1915 年考入河海，主持淮河与大运河治理，设计建造我国第一座大型连拱坝——佛子岭水库。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">院士团队</span><img src="assets/official/p_yk.jpg" alt="严恺 肖像" loading="lazy"><span class="ph-role">1912—2006 · 两院院士 · 名誉校长</span></div>
+        <figcaption><b>严恺</b><i class="ph-years">1912—2006</i>中国科学院、中国工程院两院院士，1952 年负责筹建华东水利学院并任院长，河海大学名誉校长。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">院士团队</span><img src="assets/official/p_xzl.jpg" alt="徐芝纶 肖像" loading="lazy"><span class="ph-role">1911—1999 · 中国科学院院士 · 力学家</span></div>
+        <figcaption><b>徐芝纶</b><i class="ph-years">1911—1999</i>中国科学院院士、著名力学家，1952 年参与组建华东水利学院，国内最早引进有限单元法解决水利问题的专家。</figcaption>
+      </figure>
+      <figure class="film-cell">
+        <div class="film-ph"><span class="ph-tag">院士团队</span><img src="assets/official/p_wzr.png" alt="吴中如 肖像" loading="lazy"><span class="ph-role">1939—2023 · 中国工程院院士</span></div>
+        <figcaption><b>吴中如</b><i class="ph-years">1939—2023</i>中国工程院院士，创造性地提出大坝安全监控理论与方法，成果应用于三峡、龙羊峡、丹江口等 100 多项工程。</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="film-nav reveal">
+      <button class="cbtn light sm" id="film-prev" aria-label="上一位"><svg class="ic" viewBox="0 0 24 24" style="transform:rotate(180deg)"><use href="#ic-arrow"/></svg></button>
+      <span class="film-count" id="film-count">01 / 13</span>
+      <button class="cbtn light sm" id="film-next" aria-label="下一位"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></button>
+    </div>
+    <p class="film-hint">点两侧的人像或左右箭头翻动胶片 · 悬停暂停自动播放 · 共 13 位（资料源自河海大学官网）</p>
+    <span class="folio">86</span>
   </div>
 </section>
 
-<!-- ========== 契合度测试 ========== -->
-<section id="quiz">
-  <div class="container">
-    <div class="sec-head reveal" style="text-align:center;margin:0 auto 40px">
-      <span class="eyebrow" style="justify-content:center">Quiz</span>
-      <h2>测一测，你和河海的契合度</h2>
-      <p>三道题，看看哪一个方向更像你。测试结果仅为互动演示，不构成任何报考建议。</p>
+<!-- ========== 05 校训 ========== -->
+<section class="page spread" data-spread data-name="05 校训" id="s07">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">05</span>
+      <span class="rh-name">校训精神</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Spirit</span>
+    </div>
+    <span class="kicker reveal">河海人的底色</span>
+    <h2 class="display reveal">四句话，一条河的精神</h2>
+    <p class="standfirst reveal">艰苦朴素、实事求是、严格要求、勇于探索——这是河海在创业与奋斗历程中沉淀下来的精神写照，也是这所学校最想留给学生的东西。</p>
+
+    <div class="spirit-grid">
+      <div class="spirit reveal"><div class="num-big">〇 一</div><h3>艰苦朴素</h3><p>从 1915 年创办之日起，河海便与江河湖海同甘共苦。老一辈水利人常年奔波在堤坝、工地与观测站之间，把办公室搬到一线；这种作风延续至今——崇尚简朴、拒绝浮华，把精力投向工程现场与实际问题。对河海人来说，艰苦朴素不是节俭口号，而是长期与水打交道养成的职业气质。</p></div>
+      <div class="spirit reveal"><div class="num-big">〇 二</div><h3>实事求是</h3><p>水利容不得半点虚言。一条大坝、一座泵站、一次调度方案，都要经得起水文数据、模型演算和工程实践的反复检验。河海人强调从实际出发：野外踏勘、原型观测、试验验证，用数据说话，用结果交卷。无论是科研还是工程，「是多少就是多少」是最低的诚信，也是最高的标准。</p></div>
+      <div class="spirit reveal"><div class="num-big">〇 三</div><h3>严格要求</h3><p>从学生时代的课程设计到重大工程的施工图审查，河海始终以高标准丈量每一个环节。老一辈教师以「严」著称：计算精度、实验规范、现场管理，样样不将就。这种严格塑造了河海毕业生的口碑——他们进入水利系统后，往往成为最敢较真、最守底线的那一批工程师。</p></div>
+      <div class="spirit reveal"><div class="num-big">〇 四</div><h3>勇于探索</h3><p>百十年来，河海始终站在水利变革的前沿：从传统水文观测到数字孪生流域，从单一水工结构到水生态、水环境、智慧水利交叉融合。学校鼓励师生在未知水域中试错、迭代、突破，把论文写在江河湖泊上，把技术落到工程第一线。探索精神，让这所百年学府始终面向未来。</p></div>
+    </div>
+  </div>
+
+  <!-- 水带 + 压住水带下缘的引语卡片 -->
+  <figure class="band reveal">
+    <div class="band-media">
+      <video class="band-v" src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+      <span class="band-veil"></span>
+      <div class="wrap band-q">
+        <b>「严格要求」四个字，<br>后来成了很多人做工程的底线。</b>
+        <span>Discipline · 校训</span>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="band-cap card soft green">
+        <b>水带</b>
+        <span>水的性格是既柔且韧：能绕开石头，也能把石头磨圆。这也是校训想说的另一层意思。</span>
+      </div>
+    </div>
+  </figure>
+
+  <div class="wrap">
+    <span class="folio">48</span>
+  </div>
+</section>
+
+<!-- ========== 06 实时数据与创新 ========== -->
+<section class="page spread dark waterbg" data-spread data-name="06 实时数据与创新" id="s10">
+  <video class="sec-v" src="assets/water.mp4" autoplay muted loop playsinline preload="auto"></video>
+  <span class="sec-veil"></span>
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">06</span>
+      <span class="rh-name">数据与创新</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Data & Innovation</span>
+    </div>
+    <span class="kicker reveal">数字孪生 · 实时刷新</span>
+    <h2 class="display reveal">数字里的河海，<em>正在发生</em></h2>
+    <p class="standfirst reveal">把实时数据与近年创新成果放到同一块看板上：数字会随时间流动，成果会向交叉处生长。以下为前端模拟演示数据，非官方统计。</p>
+
+    <div class="board-ticker reveal">
+      <span class="live"><i></i>LIVE</span>
+      <span class="board-clock" id="board-clock">--:--:--</span>
+      <span class="board-tick" id="board-tick"><b>·</b> 正在加载实时动态…</span>
     </div>
 
-    <div class="quizbox reveal">
+    <div class="board-grid reveal">
+      <div class="board-kpi"><b><span data-live="1286">1286</span><i>项</i></b><span>在站科研项目</span></div>
+      <div class="board-kpi"><b><span data-live="43120">43120</span><i>人</i></b><span>在校师生规模</span></div>
+      <div class="board-kpi"><b><span data-live="376">376</span><i>项</i></b><span>河海学子参与的水利基建项目</span></div>
+      <div class="board-kpi"><b><span data-live="214">214</span><i>项</i></b><span>生态治理项目（在研 / 在建）</span></div>
+    </div>
+
+    <div class="board-cols reveal">
+      <div class="board-panel">
+        <h3>科研动态 · 实时滚动</h3>
+        <ul class="feed" id="science-feed">
+          <li><time>09:12</time><span>国家重点研发计划「水资源高效利用」项目组发布阶段性成果。</span></li>
+          <li><time>10:05</time><span>数字孪生流域平台新增接入三处水文监测站点。</span></li>
+          <li><time>11:38</time><span>水环境团队完成太湖蓝藻遥感预警模型的一次迭代。</span></li>
+          <li><time>13:20</time><span>港口海岸团队完成近海工程数字孪生仿真的整周期验证。</span></li>
+          <li><time>15:47</time><span>校友参与的跨流域调水工程进入通水调试阶段。</span></li>
+        </ul>
+      </div>
+      <div class="board-panel">
+        <h3>人才数据 · 河海学子在岗分布</h3>
+        <div class="talent">
+          <div class="talent-row"><div class="tr-top"><span>水利水电工程</span><b>32%</b></div><div class="talent-bar"><i data-w="32"></i></div></div>
+          <div class="talent-row"><div class="tr-top"><span>水环境与生态</span><b>21%</b></div><div class="talent-bar"><i data-w="21"></i></div></div>
+          <div class="talent-row"><div class="tr-top"><span>港口海岸与海洋</span><b>17%</b></div><div class="talent-bar"><i data-w="17"></i></div></div>
+          <div class="talent-row"><div class="tr-top"><span>土木 · 交通 · 能源</span><b>16%</b></div><div class="talent-bar"><i data-w="16"></i></div></div>
+          <div class="talent-row"><div class="tr-top"><span>智慧水利与信息</span><b>14%</b></div><div class="talent-bar"><i data-w="14"></i></div></div>
+        </div>
+        <p class="sec-note">以上为演示数据，仅用于展示交互效果。</p>
+      </div>
+    </div>
+
+
+    <span class="kicker reveal">近年成果</span>
+    <h2 class="display reveal">当水利遇上 <em>AI、生态与海洋</em></h2>
+    <p class="standfirst reveal">以水为核，向交叉处生长。近年学校在数字孪生、智慧水利、水生态与海洋工程等方向持续产出成果——下列条目为版式示意，用于展示成果列表的呈现方式。</p>
+
+    <div class="ino-grid">
+      <div class="ino-card reveal"><span class="ino-y">2024</span><h3>数字孪生流域平台</h3><p>面向流域防洪与水资源调度，支撑预报、预警、预演、预案的「四预」闭环。</p><div class="ino-tags"><span>数字孪生</span><span>防洪调度</span></div></div>
+      <div class="ino-card reveal"><span class="ino-y">2023</span><h3>智慧水利大模型</h3><p>面向水利行业的领域模型，服务知识问答与调度辅助决策等场景。</p><div class="ino-tags"><span>AI 大模型</span><span>智慧水利</span></div></div>
+      <div class="ino-card reveal"><span class="ino-y">2023</span><h3>水环境遥感监测</h3><p>多源遥感与水质模型耦合，实现河湖水质快速反演与异常预警。</p><div class="ino-tags"><span>遥感</span><span>水环境</span></div></div>
+      <div class="ino-card reveal"><span class="ino-y">2022</span><h3>近海工程数字孪生</h3><p>面向港口与海岸结构的安全监测、仿真推演与风险预警。</p><div class="ino-tags"><span>海岸工程</span><span>仿真</span></div></div>
+      <div class="ino-card reveal"><span class="ino-y">2022</span><h3>河湖水生态修复</h3><p>面向河湖健康的系统化修复路径与效果评估方法。</p><div class="ino-tags"><span>生态修复</span><span>河湖健康</span></div></div>
+      <div class="ino-card reveal"><span class="ino-y">2021</span><h3>水利工程智能建造</h3><p>施工过程数字化与智能装备协同，提升工程质量与效率。</p><div class="ino-tags"><span>智能建造</span><span>水利工程</span></div></div>
+    </div>
+
+    <figure class="mfeature reveal" style="margin-top:clamp(34px,4.4vw,64px)">
+      <img src="assets/g2.jpg" alt="水利枢纽与泄洪场景（AI 生成，示意）">
+      <span class="mf-veil"></span>
+      <div class="wrap mf-in">
+        <b>从实验室到江河湖海，<br>交叉创新正在落地。</b>
+        <span>Interdisciplinary · 成果落地</span>
+      </div>
+      <div class="mf-cap card lift">
+        <b>成果</b><span>交叉创新成果示意配图（AI 生成，非真实场景）。</span>
+      </div>
+    </figure>
+
+    <span class="folio" style="color:#96A0A4">68</span>
+  </div>
+</section>
+
+<!-- ========== 07 全景校园 ========== -->
+<section class="page spread dark" data-spread data-name="07 全景校园" id="s15">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">07</span>
+      <span class="rh-name">全景校园</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Immersive Campus</span>
+    </div>
+    <span class="kicker reveal">把校园，装进一颗蓝色星球</span>
+    <h2 class="display reveal">一颗蓝色星球，<em>三处河海</em></h2>
+    <p class="standfirst reveal">拖动地球，找到南京西康路、江宁与常州三处校区光点。点击光点可查看校区实景与简介，也可「进入沉浸 VR」环视校园一角。</p>
+    <div class="globe-stage reveal" id="globe-stage">
+      <div class="globe-css">
+        <div class="planet"></div>
+        <div class="globe-css-note">CSS 地球预览 · WebGL 暂未启用</div>
+      </div>
+      <div class="globe-tip" id="globe-tip"></div>
+      <div class="globe-campus" id="globe-campus">
+        <button data-cid="xk"><i></i>西康路校区</button>
+        <button data-cid="jn"><i></i>江宁校区</button>
+        <button data-cid="cz"><i></i>常州校区</button>
+      </div>
+    </div>
+    <p class="sec-note">地球贴图来自 NASA 蓝色弹珠公开数据，校区位置为示意标注。</p>
+  </div>
+</section>
+
+<!-- ========== 08 打卡点 ========== -->
+<section class="page spread paper" data-spread data-name="08 打卡点" id="s16">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">08</span>
+      <span class="rh-name">校园打卡点</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Photo Spots</span>
+    </div>
+    <span class="kicker reveal">到这里，按下快门</span>
+    <h2 class="display reveal">值得打卡的几处<em>校园角落</em></h2>
+    <p class="standfirst reveal">把校园里适合停留与拍照的地方标出来——每一处都配了官网实景照片，并写清<strong style="color:var(--green);font-weight:700">「为什么适合打卡」</strong>，方便你按图索骥。</p>
+
+    <div class="spot-grid">
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">必打卡</span><img src="assets/official/xk_gate.jpg" alt="西康路校区主校门" loading="lazy"><span class="sp-loc">西康路校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-pin"/></svg>主校门</h4>
+          <p class="sp-desc">民国风格的校门与校名题字，是到访河海的第一张合影。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>每届新生的第一张合影、校庆与毕业季的固定机位；门外是南京的烟火气，门内是一条通到底的林荫路。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">推荐</span><img src="assets/official/xk_lib.jpg" alt="西康路校区老图书馆" loading="lazy"><span class="sp-loc">西康路校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-book"/></svg>老图书馆</h4>
+          <p class="sp-desc">红砖老馆配林荫大道，书卷气最浓。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>靠窗的光影在四季里各有味道，上午的斜光最适合拍书页与窗格，安静而有故事感。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">必打卡</span><img src="assets/official/xk_shui.jpg" alt="西康路校区水利馆" loading="lazy"><span class="sp-loc">西康路校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-drop"/></svg>水利馆（1956）</h4>
+          <p class="sp-desc">由华水自行设计，水利学科的象征。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>立面尺度感强，适合仰拍；「水利馆」三个字本身就是这所学校最直白的注脚。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">出片</span><img src="assets/official/xk_road.jpg" alt="西康路校区林荫大道" loading="lazy"><span class="sp-loc">西康路校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-leaf"/></svg>林荫大道</h4>
+          <p class="sp-desc">两侧法桐成拱，秋日金黄。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>校园最出片的一条路，航拍与人像都好看；秋天叶子黄透时，几乎不用修图。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">出片</span><img src="assets/official/xk_gong.jpg" alt="西康路校区工程馆" loading="lazy"><span class="sp-loc">西康路校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-camera"/></svg>工程馆（1953）</h4>
+          <p class="sp-desc">华水早期的标志性建筑，由同济大学建筑工程设计处设计。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>建筑与校史爱好者必拍的一栋；青砖立面在傍晚暖光里最有质感，横竖构图都稳。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">必打卡</span><img src="assets/official/jn_yifu.jpg" alt="江宁校区逸夫图书馆" loading="lazy"><span class="sp-loc">江宁校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-book"/></svg>逸夫图书馆</h4>
+          <p class="sp-desc">中部上挠的弧形曲面顶、侧面呈绿叶形态，江宁校区地标。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>毕业照的常见背景；正面或斜角拍，弧形屋面能拉出很强的线条感与纵深感。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">看日落</span><img src="assets/official/jn_lake.jpg" alt="江宁校区东湖" loading="lazy"><span class="sp-loc">江宁校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-wave"/></svg>东湖</h4>
+          <p class="sp-desc">临水而立的湖景，清晨薄雾与傍晚霞光都落在这里。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>水面倒影是天然的构图；清晨与傍晚各来一次，能拍到完全不同的湖，适合慢门与倒影。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">推荐</span><img src="assets/official/cz_d.jpg" alt="常州校区若水广场" loading="lazy"><span class="sp-loc">常州校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-drop"/></svg>若水广场</h4>
+          <p class="sp-desc">「若水广场」四字由严恺院士亲笔题写，水文化核心地标。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>严恺院士的题字就在广场中央，是常州校区最有纪念意义的一处合影点。</p></div>
+      </div>
+      <div class="spot reveal">
+        <div class="spot-ph"><span class="stamp">人气</span><img src="assets/official/cz_c.jpg" alt="常州校区东体育场" loading="lazy"><span class="sp-loc">常州校区</span></div>
+        <div class="spot-body"><h4><svg class="ic" viewBox="0 0 24 24"><use href="#ic-target"/></svg>东体育场</h4>
+          <p class="sp-desc">蓝色跑道与膜结构看台，最有活力的打卡背景。</p>
+          <p class="spot-why"><b>为什么适合打卡</b>运动主题人像的绝佳背景；开阔的跑道适合拍跳跃与远景，色彩也最跳。</p></div>
+      </div>
+    </div>
+    <p class="sec-note reveal" style="margin-top:18px">实景照片取自河海大学官网公开资料，仅用于校园文化展示。</p>
+    <span class="folio">104</span>
+  </div>
+</section>
+
+<!-- ========== 09 特色课程 ========== -->
+<section class="page spread" data-spread data-name="08 特色课程" id="s17">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">09</span>
+      <span class="rh-name">特色课程</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Courses</span>
+    </div>
+    <span class="kicker reveal">课堂里的水利</span>
+    <h2 class="display reveal">这些课，<em>读懂一条河</em></h2>
+    <p class="standfirst reveal">从水循环的原理，到大坝与港口的工程实践——下列课程为方向示意，用于展示课程卡片与信息的排布。</p>
+
+    <div class="course-grid">
+      <div class="course reveal"><span class="ct">专业核心</span><h3>水文学原理</h3><p>水利学科的“母语课”。从降水形成、蒸发散失、下渗产流，到坡面汇流与河道演进，系统讲解水循环各环节的数量关系。课程配合典型流域的实测资料分析，让学生学会用径流、洪水、枯水等专业语言描述一条河，为后续水文预报、水资源评价奠定理论基础。</p><div class="meta"><span><b>3</b>学分</span><span><b>48</b>学时</span></div></div>
+      <div class="course reveal"><span class="ct g">方向特色</span><h3>水工建筑物</h3><p>从重力坝、拱坝到船闸、溢洪道，课程逐一拆解水工结构的受力逻辑与构造细节。学生不仅要读懂图纸、算清荷载，还要理解一座坝如何与地形、地质、生态共处。结合三峡、溪洛渡等巨型工程案例，把抽象的力学公式转化为可落地的工程判断。</p><div class="meta"><span><b>4</b>学分</span><span><b>64</b>学时</span></div></div>
+      <div class="course reveal"><span class="ct">专业核心</span><h3>河流动力学</h3><p>泥沙从何而来？河床为何冲淤？航道怎样保持稳定？课程从水流挟沙力、河床形态阻力、弯道环流讲起，揭示河流自我塑造的规律。内容直接关系到长江口深水航道治理、黄河泥沙调控、河湖生态修复等国家重大工程的科学决策。</p><div class="meta"><span><b>3</b>学分</span><span><b>48</b>学时</span></div></div>
+      <div class="course reveal"><span class="ct g">方向特色</span><h3>水资源规划与管理</h3><p>以水循环为底盘、供需平衡为主线，讲授流域与区域水资源配置、多目标调度、节水潜力评估与决策支持系统。学生将接触真实的水资源公报数据，学习在防洪、供水、生态、发电之间寻找最优解，理解“以水定城、以水定地、以水定人”的规划理念。</p><div class="meta"><span><b>3</b>学分</span><span><b>48</b>学时</span></div></div>
+      <div class="course reveal"><span class="ct g">方向特色</span><h3>海岸动力学</h3><p>波浪传播、潮汐涨落、泥沙沿岸输移、海平面上升——这门课把海洋动力搬进课堂。内容覆盖港口选址、海岸防护、离岸工程、滩涂围垦等场景，结合物理模型试验与数值模拟，让学生理解海岸与近海工程如何在复杂动力环境中寻求安全与经济平衡。</p><div class="meta"><span><b>3</b>学分</span><span><b>48</b>学时</span></div></div>
+      <div class="course reveal"><span class="ct">交叉拓展</span><h3>智慧水利导论</h3><p>数据、算法与场景融合是核心。课程介绍物联网感知、水动力数值模拟、数字孪生流域、智能调度与洪水预报等前沿方向，并通过 Python/MATLAB 小项目让学生动手处理真实水文数据。它是传统水利走向“新工科”与“水利+AI”的入口。</p><div class="meta"><span><b>2</b>学分</span><span><b>32</b>学时</span></div></div>
+    </div>
+    <span class="folio">110</span>
+  </div>
+</section>
+
+<!-- ========== 10 校友足迹 ========== -->
+<section class="page spread paper" data-spread data-name="09 校友足迹" id="s18">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">10</span>
+      <span class="rh-name">校友治水地图</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Alumni Map</span>
+    </div>
+    <span class="kicker reveal">天下水利半边海</span>
+    <h2 class="display reveal">一批河海人，<em>半部治水图</em></h2>
+    <p class="standfirst reveal">把治水校友的足迹立在中国地图上——每一根光柱代表一个省级行政区，柱越高，该地校友规模相对越大。悬停任意柱体可查看示意数据；以下内容为演示版式，非官方统计。</p>
+
+    <div class="mapwrap">
+      <div class="hmap reveal" id="hmap">
+        <div class="hmap-scene" id="hmap-scene">
+          <div class="hmap-plane" id="hmap-plane"></div>
+          <span class="hmap-tip" id="hmap-tip"></span>
+          <div class="hmap-legend"><span class="lg-min"></span><span>规模较小</span><span class="lg-bar"></span><span>规模较大</span></div>
+        </div>
+      </div>
+      <div class="map-side">
+        <div class="mapstat">
+          <div><b>34</b><span>个省级行政区有校友分布</span></div>
+          <div><b>1000+</b><span>校友参与的工程与项目（示意）</span></div>
+          <div><b>110</b><span>年 · 一代代河海人接力治水</span></div>
+        </div>
+        <div class="map-quote">「天下水利半边海」——从大江大河的治理一线，到海岸与近海工程，河海人把论文写在水上。</div>
+        <p class="sec-note">气泡大小与数字均为演示示意，非官方统计。</p>
+      </div>
+    </div>
+    <span class="folio">116</span>
+  </div>
+</section>
+
+<!-- ========== 11 留言板 ========== -->
+<section class="page spread paper" data-spread data-name="10 留言板" id="s20">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">11</span>
+      <span class="rh-name">校友留言板</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Guestbook</span>
+    </div>
+    <span class="kicker reveal">写下你的那句话</span>
+    <h2 class="display reveal">把想说的话，<em>留在河边</em></h2>
+    <p class="standfirst reveal">无论你是在校生、校友，还是第一次了解河海的人，都可以在这里留下一句话。留言仅保存在你本机浏览器中，用于演示，不会上传服务器。</p>
+
+    <form class="gb-form reveal" id="gb-form">
+      <input class="gb-name" id="gb-name" type="text" placeholder="你的称呼（如：95级 水利）" maxlength="24" autocomplete="off">
+      <textarea class="gb-msg" id="gb-msg" placeholder="写下一句想对河海说的话…" maxlength="200"></textarea>
+      <button class="btn" type="submit">发表留言 <svg class="ic ic-sm" viewBox="0 0 24 24"><use href="#ic-arrow"/></svg></button>
+    </form>
+    <p class="sec-note" id="gb-hint">已内置若干示例留言，可自行添加。</p>
+    <div class="gb-list reveal" id="gb-list"></div>
+    <span class="folio">128</span>
+  </div>
+</section>
+
+<!-- ========== 12 互动 ========== -->
+<section class="page spread" data-spread data-name="11 互动" id="s09">
+  <div class="wrap">
+    <div class="rh reveal">
+      <span class="rh-no">12</span>
+      <span class="rh-name">互动</span>
+      <span class="rh-rule"></span>
+      <span class="rh-en">Quiz</span>
+    </div>
+    <div style="text-align:center;max-width:760px;margin:0 auto">
+      <span class="kicker reveal" style="justify-content:center">读者互动</span>
+      <h2 class="display reveal" style="margin-left:auto;margin-right:auto">测一测，你和河海的契合度</h2>
+      <p class="standfirst reveal" style="margin-left:auto;margin-right:auto">三道题，看看哪一个方向更像你。测试结果仅为互动演示，不构成任何报考建议。</p>
+    </div>
+
+    <div class="quizbox card reveal">
       <div class="q-item">
         <div class="q-title"><i>Q1</i>如果让你解决一个问题，你更想选？</div>
         <div class="opts" data-q="0">
-          <button class="opt" data-v="water">让江河更安澜<span>防洪、调水、水资源</span></button>
-          <button class="opt" data-v="env">让城市更宜居<span>水环境与水生态</span></button>
-          <button class="opt" data-v="sea">让海洋更可亲<span>港口、海岸与海洋</span></button>
+          <button class="opt" data-v="water"><i>A</i><span>让江河更安澜<em>防洪、调水、水资源</em></span></button>
+          <button class="opt" data-v="env"><i>B</i><span>让城市更宜居<em>水环境与水生态</em></span></button>
+          <button class="opt" data-v="sea"><i>C</i><span>让海洋更可亲<em>港口、海岸与海洋</em></span></button>
         </div>
       </div>
       <div class="q-item">
         <div class="q-title"><i>Q2</i>你更喜欢哪种工作方式？</div>
         <div class="opts" data-q="1">
-          <button class="opt" data-v="smart">数据与模型<span>编程、仿真、数字孪生</span></button>
-          <button class="opt" data-v="water">实地与工程<span>现场、施工、勘测</span></button>
-          <button class="opt" data-v="sea">设计与规划<span>方案、图纸、蓝图</span></button>
+          <button class="opt" data-v="smart"><i>A</i><span>数据与模型<em>编程、仿真、数字孪生</em></span></button>
+          <button class="opt" data-v="water"><i>B</i><span>实地与工程<em>现场、施工、勘测</em></span></button>
+          <button class="opt" data-v="sea"><i>C</i><span>设计与规划<em>方案、图纸、蓝图</em></span></button>
         </div>
       </div>
       <div class="q-item">
         <div class="q-title"><i>Q3</i>你更欣赏哪一种性格？</div>
         <div class="opts" data-q="2">
-          <button class="opt" data-v="water">沉稳务实<span>脚踏实地，久久为功</span></button>
-          <button class="opt" data-v="env">严谨求实<span>一丝不苟，精益求精</span></button>
-          <button class="opt" data-v="smart">敢想敢闯<span>敢为人先，勇于探索</span></button>
+          <button class="opt" data-v="water"><i>A</i><span>沉稳务实<em>脚踏实地，久久为功</em></span></button>
+          <button class="opt" data-v="env"><i>B</i><span>严谨求实<em>一丝不苟，精益求精</em></span></button>
+          <button class="opt" data-v="smart"><i>C</i><span>敢想敢闯<em>敢为人先，勇于探索</em></span></button>
         </div>
       </div>
 
@@ -809,40 +1592,312 @@
         <p id="result-desc"></p>
       </div>
     </div>
+    <span class="folio">60</span>
   </div>
 </section>
 
-<!-- ========== Footer ========== -->
-<footer>
-  <div class="container">
+<!-- ========== 封底 ========== -->
+<section class="page spread back" data-spread data-name="封底" id="back">
+  <div class="wrap">
+    <div class="fbrand">
+      <span class="brand-t">河海大学</span>
+      <span class="brand-s" style="color:#8B9498">数字特刊 · Vol.110 · 2026</span>
+    </div>
     <div class="fgrid">
       <div>
-        <div class="brand" style="margin-bottom:16px">
-          <span class="mark"><svg viewBox="0 0 24 24" class="ic-sm" style="stroke:#fff"><use href="#ic-drop"/></svg></span>
-          <span>河海大学 数字探索平台<small>H O H A I &nbsp;U N I V E R S I T Y</small></span>
-        </div>
-        <p>以「水」为线索的沉浸式数字宣传平台原型，帮助不熟悉河海的人顺流而下，一层层发现这所百年学府的历史、学科与精神。</p>
-        <p class="notice">本页面为演示原型（Mock），用于展示设计风格与交互思路；内容整理自公开资料，数据与配图仅为示意，非学校官方发布。</p>
+        <h4>关于本刊</h4>
+        <p>这是一份以「水」为线索的沉浸式数字宣传特刊原型，帮助不熟悉河海的人顺流而下，一层层发现这所百年学府的历史、学科与精神。整刊采用杂志版式，顶部按钮直达每一栏，无需长距离滚动。</p>
+        <p class="notice">本页面为演示原型（Mock），用于展示设计风格与交互思路；内容整理自公开资料，数据与配图（含视频、图片）均为 AI 生成示意，非学校官方发布。</p>
       </div>
       <div class="sources">
         <h4>资料来源</h4>
         <ol>
-          <li id="cite-1"><span class="src-title">河海大学 · 学校简介</span><a class="src-url" href="https://www.hhu.edu.cn/xxjj_23318/list.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/xxjj_23318/list.htm</a></li>
-          <li id="cite-2"><span class="src-title">河海大学 · 大学章程</span><a class="src-url" href="https://www.hhu.edu.cn/16347/list.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/16347/list.htm</a></li>
-          <li id="cite-3"><span class="src-title">河海大学 · 校训</span><a class="src-url" href="https://www.hhu.edu.cn/2021/0326/c179a220940/page.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/2021/0326/c179a220940/page.htm</a></li>
-          <li id="cite-4"><span class="src-title">河海大学官方网站</span><a class="src-url" href="https://www.hhu.edu.cn" target="_blank" rel="noopener">https://www.hhu.edu.cn</a></li>
+          <li><span class="src-title">河海大学 · 学校简介</span><a class="src-url" href="https://www.hhu.edu.cn/xxjj_23318/list.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/xxjj_23318/list.htm</a></li>
+          <li><span class="src-title">河海大学 · 大学章程</span><a class="src-url" href="https://www.hhu.edu.cn/16347/list.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/16347/list.htm</a></li>
+          <li><span class="src-title">河海大学 · 校训</span><a class="src-url" href="https://www.hhu.edu.cn/2021/0326/c179a220940/page.htm" target="_blank" rel="noopener">https://www.hhu.edu.cn/2021/0326/c179a220940/page.htm</a></li>
+          <li><span class="src-title">河海大学官方网站</span><a class="src-url" href="https://www.hhu.edu.cn" target="_blank" rel="noopener">https://www.hhu.edu.cn</a></li>
         </ol>
       </div>
     </div>
+    <div class="fb-cta">
+      <button class="cbtn light sm" data-go="cover" aria-label="回到封面"><svg class="ic" viewBox="0 0 24 24"><use href="#ic-arrow-l"/></svg></button>
+      <span class="fb-cta-t">回到封面 · 重读本期</span>
+    </div>
     <div class="fbot">
-      <span>© 2026 河海大学数字探索平台 · 设计原型 Mock</span>
-      <span>海洋蓝 #0B6E99 · 浅绿 #22C08A · 思源黑体 · Bento Grid</span>
+      <span>© 2026 河海大学数字特刊 · 设计原型 Mock</span>
+      <span>青蓝 #069AB2 · 浅绿 #22C08A · 思源黑体 · 杂志版式</span>
     </div>
   </div>
-</footer>
+</section>
+
+</main>
 
 <script src="./_shared/js/echarts.min.js"></script>
+<script src="assets/china.js"></script>
 <script src="assets/charts.js"></script>
+<script src="./_shared/js/three.min.js"></script>
+<script src="assets/earth_min.js"></script>
+<script>
+// assets/globe.js - immersive campus globe + VR pano
+(function () {
+  var EARTH_SRC = 'assets/earth.jpg';
+  var EARTH_MIN = window.__HH_EARTH_URI || '';
+
+  var campuses = [
+    { id: 'xk', name: '西康路校区', loc: '南京 · 鼓楼区', lat: 32.06, lon: 118.77,
+      photo: 'assets/official/xk_gate.jpg',
+      desc: '河海大学历史最悠久的校区，民国风格的校门、黄墙绿瓦的水利馆与林荫道承载着百年记忆。' },
+    { id: 'jn', name: '江宁校区', loc: '南京 · 江宁区', lat: 31.92, lon: 118.79,
+      photo: 'assets/official/jn_xld.jpg',
+      desc: '占地最广的现代化校区，湖泊、图书馆、运动场与教学区交错，是校园生活的主场。' },
+    { id: 'cz', name: '常州校区', loc: '江苏 · 常州', lat: 31.78, lon: 119.97,
+      photo: 'assets/official/cz_ruoshui.jpg',
+      desc: '面向新工科的年轻校区，校园水景与现代楼宇交织，呈现出另一种河海气质。' }
+  ];
+
+  var stage = document.getElementById('globe-stage');
+  if (!stage) return;
+
+  var tip = document.getElementById('globe-tip');
+  if (tip) {
+    tip.addEventListener('click', function (e) { e.stopPropagation(); });
+    tip.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  }
+  var fallback = stage.querySelector('.globe-css');
+  var renderer, scene, camera, earth, markers = [];
+  var raycaster = new THREE.Raycaster();
+  var mouse = new THREE.Vector2();
+  var width = 0, height = 0;
+  var selected = null;
+  var dragging = false, lastX = 0, lastY = 0;
+  var autoRotate = true;
+
+  function hasWebGL() {
+    try {
+      var c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+    } catch (e) { return false; }
+  }
+
+  function llToPos(lat, lon, r) {
+    var phi = (90 - lat) * Math.PI / 180;
+    var theta = (lon + 180) * Math.PI / 180;
+    return new THREE.Vector3(
+      -r * Math.sin(phi) * Math.cos(theta),
+      r * Math.cos(phi),
+      r * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  function setTip(c) {
+    if (!tip) return;
+    tip.innerHTML = '<img src="' + c.photo + '" alt="' + c.name + '"><div class="tt"><b>' + c.name + '<em>' + c.loc + '</em></b><p>' + c.desc + '</p><button class="globe-enter" data-cid="' + c.id + '">进入沉浸 VR</button></div>';
+    tip.classList.add('on');
+    var btn = tip.querySelector('.globe-enter');
+    if (btn) btn.addEventListener('click', function () { openPano(c); });
+  }
+
+  function hideTip() {
+    if (tip) tip.classList.remove('on');
+  }
+
+  function openPano(c) {
+    var modal = document.getElementById('pano-modal');
+    var view = document.getElementById('pano-view');
+    if (!modal || !view) return;
+    view.style.backgroundImage = 'url("' + c.photo + '")';
+    view.style.backgroundSize = 'auto 100%';
+    view.style.backgroundRepeat = 'repeat-x';
+    view.style.backgroundPosition = 'center';
+    modal.classList.add('on');
+  }
+
+  (function initPano() {
+    var modal = document.getElementById('pano-modal');
+    var view = document.getElementById('pano-view');
+    var close = document.getElementById('pano-close');
+    if (!modal || !view) return;
+    if (close) close.addEventListener('click', function () { modal.classList.remove('on'); });
+    var drag = false, sx = 0, sp = 0, x = 0;
+    view.addEventListener('pointerdown', function (e) { drag = true; sx = e.clientX; sp = x; view.style.cursor = 'grabbing'; });
+    window.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      x = sp - (e.clientX - sx);
+      var w = view.clientWidth || 1;
+      x = ((x % w) + w) % w;
+      view.style.backgroundPosition = (x - w) + 'px center';
+    });
+    window.addEventListener('pointerup', function () { drag = false; view.style.cursor = 'grab'; });
+  })();
+
+  function initWebGL() {
+    if (!hasWebGL()) return false;
+    scene = new THREE.Scene();
+    width = stage.clientWidth;
+    height = stage.clientHeight;
+    camera = new THREE.PerspectiveCamera(45, width / height || 1, 0.1, 1000);
+    camera.position.z = 3.4;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    stage.appendChild(renderer.domElement);
+
+    var ambient = new THREE.AmbientLight(0xffffff, 0.55);
+    scene.add(ambient);
+    var dir = new THREE.DirectionalLight(0xffffff, 1.1);
+    dir.position.set(5, 3, 5);
+    scene.add(dir);
+    var back = new THREE.DirectionalLight(0x445566, 0.35);
+    back.position.set(-5, -2, -5);
+    scene.add(back);
+
+    var geometry = new THREE.SphereGeometry(1, 64, 64);
+    var loader = new THREE.TextureLoader();
+    function applyTexture(src) {
+      loader.load(src, function (tex) {
+        if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+        var mat = new THREE.MeshPhongMaterial({ map: tex, specular: 0x111111, shininess: 10 });
+        earth = new THREE.Mesh(geometry, mat);
+        scene.add(earth);
+        addMarkers();
+        animate();
+      }, undefined, function () {
+        if (src !== EARTH_MIN) applyTexture(EARTH_MIN);
+      });
+    }
+    applyTexture(EARTH_SRC);
+    return true;
+  }
+
+  function addMarkers() {
+    campuses.forEach(function (c) {
+      var pos = llToPos(c.lat, c.lon, 1.02);
+      var dot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.018, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0x49E0B0 })
+      );
+      dot.position.copy(pos);
+      dot.userData = c;
+      earth.add(dot);
+      markers.push(dot);
+
+      var el = document.createElement('button');
+      el.className = 'globe-mark';
+      el.innerHTML = '<i></i><span>' + c.name + '</span>';
+      el.setAttribute('aria-label', c.name);
+      stage.appendChild(el);
+      c.el = el;
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        select(c);
+      });
+    });
+  }
+
+  function select(c) {
+    selected = c;
+    setTip(c);
+    markers.forEach(function (m) {
+      var u = m.userData;
+      if (u.el) u.el.classList.toggle('on', u.id === c.id);
+    });
+    if (campusBar) {
+      $$('button', campusBar).forEach(function (b) {
+        b.classList.toggle('on', b.getAttribute('data-cid') === c.id);
+      });
+    }
+  }
+
+  var campusBar = document.getElementById('globe-campus');
+  if (campusBar) {
+    $$('button', campusBar).forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var cid = btn.getAttribute('data-cid');
+        var c = campuses.find(function (x) { return x.id === cid; });
+        if (c) select(c);
+      });
+    });
+  }
+
+  function $$(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
+
+  function resize() {
+    if (!renderer || !camera) return;
+    width = stage.clientWidth;
+    height = stage.clientHeight;
+    if (width === 0 || height === 0) return;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  function projectMarkers() {
+    if (!camera || !earth) return;
+    markers.forEach(function (m) {
+      var c = m.userData;
+      var v = new THREE.Vector3();
+      m.getWorldPosition(v);
+      v.project(camera);
+      var x = (v.x * 0.5 + 0.5) * width;
+      var y = (-v.y * 0.5 + 0.5) * height;
+      var visible = v.z < 1;
+      c.el.style.display = visible ? 'block' : 'none';
+      c.el.style.left = x + 'px';
+      c.el.style.top = y + 'px';
+    });
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (earth) earth.rotation.y += autoRotate && !dragging ? 0.0006 : 0;
+    projectMarkers();
+    renderer.render(scene, camera);
+  }
+
+  stage.addEventListener('pointerdown', function (e) {
+    dragging = true;
+    autoRotate = false;
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+  window.addEventListener('pointermove', function (e) {
+    if (!dragging || !earth) return;
+    earth.rotation.y += (e.clientX - lastX) * 0.005;
+    earth.rotation.x += (e.clientY - lastY) * 0.003;
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+  window.addEventListener('pointerup', function () { dragging = false; });
+  stage.addEventListener('click', function (e) {
+    if (!camera || !earth) return;
+    var rect = stage.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    var hits = raycaster.intersectObjects(markers);
+    if (hits.length) select(hits[0].object.userData);
+    else hideTip();
+  });
+
+  window.addEventListener('resize', resize);
+  if ('ResizeObserver' in window) {
+    try { new ResizeObserver(resize).observe(stage); } catch (_) {}
+  }
+  window.hhGlobeResize = resize;
+
+  if (!initWebGL()) {
+    if (fallback) fallback.style.display = 'grid';
+  }
+})();
+
+</script>
 <script src="assets/app.js"></script>
+
+<div class="pano-modal" id="pano-modal">
+  <button class="pano-close" id="pano-close">退出 VR</button>
+  <div class="pano-view" id="pano-view"></div>
+</div>
 </body>
 </html>
